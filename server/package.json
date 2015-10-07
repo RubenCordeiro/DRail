@@ -1,0 +1,27 @@
+{
+  "name": "drail-server",
+  "version": "1.0.0",
+  "description": "DRail webservice for the catastrophic operation of the railways.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "DRail"
+  ],
+  "authors": [
+    {
+      "name": "Ruben Cordeiro",
+      "email": "ruben.cordeiro.eng@gmail.com"
+    },
+    {
+      "name": "Duarte Duarte",
+      "email": "dnpdd@gmail.com"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "hapi": "~10.4.0",
+    "seraph": "~0.13.3"
+  }
+}

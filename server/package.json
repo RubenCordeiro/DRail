@@ -4,11 +4,15 @@
   "description": "DRail webservice for the catastrophic operation of the railways.",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "DRail"
   ],
+  "bugs": {
+      "url" : "https://github.com/RubenCordeiro/DRail/issues"
+  },
   "authors": [
     {
       "name": "Ruben Cordeiro",
@@ -16,9 +20,15 @@
     },
     {
       "name": "Duarte Duarte",
-      "email": "dnpdd@gmail.com"
+      "email": "dnpd.dd@gmail.com",
+      "url": "http://dduarte.github.io"
     }
   ],
+  "repository": {
+      "type" : "git",
+      "url" : "https://github.com/RubenCordeiro/DRail.git"
+  },
+  "private": true,
   "license": "MIT",
   "dependencies": {
     "hapi": "~10.4.0",

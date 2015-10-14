@@ -31,6 +31,8 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
+    "boom": "~2.9.0",
+    "config": "~1.16.0",
     "hapi": "~10.4.0",
     "seraph": "~0.13.3"
   }

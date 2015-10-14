@@ -1,0 +1,8 @@
+{
+  "database": {
+    "server": "http://localhost:7474",
+    "user": "neo4j",
+    "pass": "neo4j"
+  },
+  "jwt": ":D'TH=;F g}zKuM]B.N[U5ACf!]vuF"
+}

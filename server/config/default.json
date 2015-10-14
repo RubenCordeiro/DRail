@@ -4,5 +4,6 @@
     "user": "neo4j",
     "pass": "neo4j"
   },
-  "jwt": ":D'TH=;F g}zKuM]B.N[U5ACf!]vuF"
+  "jwt": ":D'TH=;F g}zKuM]B.N[U5ACf!]vuF",
+  "ticketKey": "1234"
 }

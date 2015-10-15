@@ -17,6 +17,14 @@ Ticket.schema = {
     id: { type: String, required: true },
     date: { type: Date, required: true }
 };
+
+var Train = require('./train');
+Ticket.compose(Train, 'train', 'belongsTo');
+
+var Station = require('./station');
+Ticket.compose(Station, 'departureStation', 'departsFrom');
+Ticket.compose(Station, 'arrivalStation', 'arrivesTo');
+
 User.compose(Ticket, 'tickets', 'bought');
 
 

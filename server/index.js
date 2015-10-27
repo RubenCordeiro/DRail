@@ -1,6 +1,6 @@
 var Hapi = require('hapi');
 
-var server = new Hapi.Server();
+const server = new Hapi.Server();
 server.connection({
     port: 3000,
     labels: ['api']
@@ -8,7 +8,7 @@ server.connection({
 
 require('./routes')(server);
 
-var goodReporterOptions = {
+const goodReporterOptions = {
     opsInterval: 1000,
     reporters: [{
         reporter: require('good-file'),
@@ -30,7 +30,8 @@ server.register([
                 title: 'Example API',
                 description: 'Powered by node, hapi, joi, hapi-swaggered, hapi-swaggered-ui and swagger-ui',
                 version: '1.0'
-            }
+            },
+            auth: false
         }
     },
     {
@@ -38,7 +39,8 @@ server.register([
         options: {
             title: 'Example API',
             path: '/docs',
-            swaggerOptions: {} // see above
+            swaggerOptions: {},
+            auth: false
         }
     },
     {

@@ -35,9 +35,13 @@
     "config": "~1.16.0",
     "crypto-js": "~3.1.5",
     "hapi": "~10.4.0",
+    "hapi-swaggered": "~2.4.1",
+    "hapi-swaggered-ui": "~2.1.1",
+    "inert": "~3.1.0",
     "joi": "~6.9.1",
     "neo4j": "~1.1.1",
     "seraph": "~0.13.3",
-    "seraph-model": "~0.7.5"
+    "seraph-model": "~0.7.5",
+    "vision": "~3.0.0"
   }
 }

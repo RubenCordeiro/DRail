@@ -42,12 +42,12 @@ module.exports = {
                                 trainId: trip.properties.trainId,
                                 departureTime: trip.properties.departureTime,
                                 arrivalTime: trip.properties.arrivalTime,
-                                distance: trip.properties.distance
+                                distance: trip.properties.distance,
+                                tripId: trip.id
                             }
                         })
                         .toArray();
-                })
-                .flatten();
+                });
 
 
             return callback(null, ret.toArray());

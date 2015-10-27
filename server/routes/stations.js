@@ -1,5 +1,6 @@
 var Boom = require('boom');
 var Joi = require('joi');
+var Lazy = require('lazy.js');
 
 var Station = require('../models/station');
 var db = require('seraph')(require('config').get('database'));
@@ -9,6 +10,9 @@ module.exports = function (server) {
     server.route({
         method: 'GET',
         path: '/api/stations',
+        config: {
+            tags: ['api']
+        },
         handler: function (request, reply) {
             Station.findAll(function (err, stations) {
                 if (err)
@@ -21,9 +25,17 @@ module.exports = function (server) {
 
     server.route({
         method: 'GET',
-        path: '/api/stations/{name}',
+        path: '/api/stations/{id}',
+        config: {
+            validate: {
+                params: {
+                    id: Joi.number().integer()
+                }
+            },
+            tags: ['api']
+        },
         handler: function (request, reply) {
-            Station.where({name: request.params.name}, function (err, station) {
+            Station.where({id: request.params.id}, function (err, station) {
                 if (err)
                     reply(Boom.badImplementation('Internal server error', err));
                 else
@@ -47,7 +59,8 @@ module.exports = function (server) {
                         distance: Joi.number().integer()
                     }))
                 }
-            }
+            },
+            tags: ['api']
         },
         handler: function (request, reply) {
             var txn = db.batch();
@@ -56,7 +69,12 @@ module.exports = function (server) {
             txn.label(newStation, 'station');
             if (request.payload.trips) {
                 request.payload.trips.forEach(function (trip) {
-                    txn.relate(newStation, 'trip', trip.id, {distance: trip.distance, departureTime: trip.departureTime, arrivalTime: trip.arrivalTime, trainId: trip.trainId});
+                    txn.relate(newStation, 'trip', trip.id, {
+                        distance: trip.distance,
+                        departureTime: trip.departureTime,
+                        arrivalTime: trip.arrivalTime,
+                        trainId: trip.trainId
+                    });
                 });
             }
 
@@ -66,6 +84,30 @@ module.exports = function (server) {
                 return reply(newStation);
             });
 
+        }
+    });
+
+    server.route({
+        method: 'GET',
+        path: '/api/stations/{id}/trips',
+        config: {
+            validate: {
+                params: {
+                    id: Joi.number().integer().required()
+                }
+            },
+            tags: ['api']
+        },
+        handler: function (request, reply) {
+            db.query('MATCH (from:station)-[trips:trip]->(destination:station) WHERE ID(from) = {stationId} RETURN trips',
+                {
+                    stationId: request.params.id
+                },
+                function (err, trips) {
+                    if (err) return reply(Boom.badImplementation('Internal server error', err));
+
+                    return reply(Lazy(trips).pluck("properties").toArray());
+                });
         }
     });
 };

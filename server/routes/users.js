@@ -1,8 +1,9 @@
 'use strict';
 
-const Boom = require('boom');
-const Joi = require('joi');
-const Jwt = require('jsonwebtoken');
+const Boom = require('boom'),
+    Joi = require('joi'),
+    Jwt = require('jsonwebtoken'),
+    Lazy = require('lazy.js');
 
 const User = require('../models/user');
 
@@ -66,7 +67,11 @@ module.exports = function (server) {
                         username: newUser.username,
                         id: newUser.id,
                         role: newUser.role,
-                        token: Jwt.sign({ username: newUser.username, id: newUser.id, role: newUser.role }, require('config').get('jwt'))
+                        token: Jwt.sign({
+                            username: newUser.username,
+                            id: newUser.id,
+                            role: newUser.role
+                        }, require('config').get('jwt'))
                     });
                 });
             });
@@ -111,4 +116,63 @@ module.exports = function (server) {
             });
         }
     });
+
+    server.route({
+        method: 'GET',
+        path: '/api/users/{id}/tickets',
+        config: {
+            auth: 'jwt',
+            validate: {
+                params: {
+                    id: Joi.number().integer().required()
+                }
+            }
+        },
+        handler: (request, reply) => {
+            User.read(request.params.id, (err, user) => {
+                if (err) {
+                    server.log(['error', 'database'], err);
+                    return reply(Boom.badImplementation('Internal server error'));
+                }
+
+                if (!user)
+                    return reply(Boom.notFound("User does not exist"));
+
+                return reply(user.tickets);
+            });
+        }
+    });
+
+    server.route({
+        method: 'GET',
+        path: '/api/users/{userId}/tickets/{ticketId}',
+        config: {
+            auth: 'jwt',
+            validate: {
+                params: {
+                    userId: Joi.number().integer().required(),
+                    ticketId: Joi.number().integer().required()
+                }
+            }
+        },
+        handler: (request, reply) => {
+            User.read(request.params.userId, (err, user) => {
+                if (err) {
+                    server.log(['error', 'database'], err);
+                    return reply(Boom.badImplementation('Internal server error'));
+                }
+
+                if (!user)
+                    return reply(Boom.notFound('User not found'));
+
+                var ticket = Lazy(user.tickets).find((ticket) => { return ticket.id == request.params.ticketId; });
+
+                if (!ticket)
+                    return reply(Boom.badRequest("User does not own a ticket with the given id"));
+
+                return reply(ticket);
+            });
+        }
+    });
+
 };

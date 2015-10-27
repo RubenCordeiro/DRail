@@ -13,11 +13,12 @@ module.exports = function(server) {
                     from: Joi.number().integer().required(),
                     to: Joi.number().integer().required()
                 }
-            }
+            },
+            tags: ['api']
         },
         handler: function(request, reply) {
             Trip.find(request.query.from, request.query.to, function(err, trips) {
-                if (err) return reply(Boom.badImplementation('Internal server error', err));
+                if (err) return reply(err).code(500);
 
                 return reply(trips);
             });

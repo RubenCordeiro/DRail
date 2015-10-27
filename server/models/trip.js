@@ -16,13 +16,13 @@ module.exports = {
     },
 
     find: function (departureStationId, arrivalStationId, callback) {
-        db.query('MATCH path = (departureStation:station {id: {departureStationId}})-[:trip*]-(arrivalStation:station {id: {arrivalStationId}}) RETURN path, length(path)', {
+        db.query('MATCH path = (departureStation:station)-[:trip*]-(arrivalStation:station) WHERE ID(departureStation) = {departureStationId} AND ID(arrivalStation) = {arrivalStationId} RETURN EXTRACT( n in nodes(path) | n) as nodes_in_path, EXTRACT(r in relationships(path) | r), path, length(path)', {
             departureStationId: departureStationId,
             arrivalStationId: arrivalStationId
         }, function (err, trips) {
             if (err) return callback(err, null);
 
-            return callback(trips);
+            return callback(null, trips);
         });
     },
 

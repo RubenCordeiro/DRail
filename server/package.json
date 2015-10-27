@@ -34,6 +34,8 @@
     "boom": "~2.9.0",
     "config": "~1.16.0",
     "crypto-js": "~3.1.5",
+    "good": "~6.4.0",
+    "good-file": "~5.1.0",
     "hapi": "~10.4.0",
     "hapi-swaggered": "~2.4.1",
     "hapi-swaggered-ui": "~2.1.1",

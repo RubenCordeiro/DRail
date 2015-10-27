@@ -8,6 +8,15 @@ server.connection({
 
 require('./routes')(server);
 
+var goodReporterOptions = {
+    opsInterval: 1000,
+    reporters: [{
+        reporter: require('good-file'),
+        events: {log: '*'},
+        config: {path: './logs'}
+    }]
+};
+
 server.register([
     require('inert'),
     require('vision'),
@@ -31,14 +40,19 @@ server.register([
             path: '/docs',
             swaggerOptions: {} // see above
         }
+    },
+    {
+        register: require('good'),
+        options: goodReporterOptions
     }], {
     select: 'api'
 }, function (err) {
     if (err) {
         throw err
     }
+
+    server.start(function () {
+        console.log('Server running at:', server.info.uri);
+    });
 });
 
-server.start(function () {
-    console.log('Server running at:', server.info.uri);
-});

@@ -1,6 +1,8 @@
-var Boom = require('boom');
-var Joi = require('joi');
-var Trip = require('../models/trip');
+'use strict';
+
+const Boom = require('boom');
+const Joi = require('joi');
+const Trip = require('../models/trip');
 
 module.exports = function(server) {
 
@@ -16,7 +18,7 @@ module.exports = function(server) {
             },
             tags: ['api']
         },
-        handler: function(request, reply) {
+        handler: (request, reply) => {
             Trip.find(request.query.from, request.query.to, function(err, trips) {
                 if (err) return reply(err).code(500);
 

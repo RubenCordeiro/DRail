@@ -1,4 +1,6 @@
-var db = require('seraph')(require('config').get('database'));
+'use strict';
+
+const db = require('seraph')(require('config').get('database'));
 
 var Station = require('seraph-model')(db, 'station');
 Station.schema = {

@@ -1,4 +1,6 @@
-var Hapi = require('hapi');
+'use strict';
+
+const Hapi = require('hapi');
 
 const server = new Hapi.Server();
 server.connection({
@@ -48,12 +50,12 @@ server.register([
         options: goodReporterOptions
     }], {
     select: 'api'
-}, function (err) {
+}, (err) => {
     if (err) {
         throw err
     }
 
-    server.start(function () {
+    server.start(() => {
         console.log('Server running at:', server.info.uri);
     });
 });

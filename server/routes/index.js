@@ -1,4 +1,6 @@
-module.exports = function (server) {
+'use strict';
+
+module.exports = (server) => {
     require('./users')(server);
     require('./stations')(server);
     require('./trips')(server);
@@ -10,7 +12,7 @@ module.exports = function (server) {
         config: {
             auth: false
         },
-        handler: function (request, reply) {
+        handler: (request, reply) => {
             reply.redirect('/docs')
         }
     });

@@ -1,20 +1,22 @@
-var Boom = require('boom');
-var Joi = require('joi');
-var Lazy = require('lazy.js');
+'use strict';
 
-var Station = require('../models/station');
-var db = require('seraph')(require('config').get('database'));
+const Boom = require('boom');
+const Joi = require('joi');
+const Lazy = require('lazy.js');
+
+const Station = require('../models/station');
+const db = require('seraph')(require('config').get('database'));
 
 
-module.exports = function (server) {
+module.exports = (server) => {
     server.route({
         method: 'GET',
         path: '/api/stations',
         config: {
             tags: ['api']
         },
-        handler: function (request, reply) {
-            Station.findAll(function (err, stations) {
+        handler: (request, reply) => {
+            Station.findAll( (err, stations) => {
                 if (err)
                     reply(Boom.badImplementation('Internal server error', err));
                 else
@@ -34,8 +36,8 @@ module.exports = function (server) {
             },
             tags: ['api']
         },
-        handler: function (request, reply) {
-            Station.where({id: request.params.id}, function (err, station) {
+        handler: (request, reply) => {
+            Station.where({id: request.params.id}, (err, station) => {
                 if (err)
                     reply(Boom.badImplementation('Internal server error', err));
                 else
@@ -62,13 +64,13 @@ module.exports = function (server) {
             },
             tags: ['api']
         },
-        handler: function (request, reply) {
+        handler: (request, reply) => {
             var txn = db.batch();
 
             var newStation = txn.save({name: request.payload.name});
             txn.label(newStation, 'station');
             if (request.payload.trips) {
-                request.payload.trips.forEach(function (trip) {
+                request.payload.trips.forEach( (trip) => {
                     txn.relate(newStation, 'trip', trip.id, {
                         distance: trip.distance,
                         departureTime: trip.departureTime,
@@ -78,7 +80,7 @@ module.exports = function (server) {
                 });
             }
 
-            txn.commit(function (err) {
+            txn.commit( (err) => {
                 if (err) return reply(Boom.badImplementation('Internal server error', err));
 
                 return reply(newStation);
@@ -98,12 +100,12 @@ module.exports = function (server) {
             },
             tags: ['api']
         },
-        handler: function (request, reply) {
+        handler: (request, reply) => {
             db.query('MATCH (from:station)-[trips:trip]->(destination:station) WHERE ID(from) = {stationId} RETURN trips',
                 {
                     stationId: request.params.id
                 },
-                function (err, trips) {
+                (err, trips) => {
                     if (err) return reply(Boom.badImplementation('Internal server error', err));
 
                     return reply(Lazy(trips).pluck("properties").toArray());

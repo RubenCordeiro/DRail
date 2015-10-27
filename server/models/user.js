@@ -1,6 +1,8 @@
-var db = require('seraph')(require('config').get('database'));
-var Sha1 = require('crypto-js/sha1');
-var model = require('seraph-model');
+'use strict';
+
+const db = require('seraph')(require('config').get('database'));
+const Sha1 = require('crypto-js/sha1');
+const model = require('seraph-model');
 
 var User = model(db, 'user');
 User.schema = {
@@ -29,6 +31,5 @@ Ticket.compose(Station, 'departureStation', 'departsFrom');
 Ticket.compose(Station, 'arrivalStation', 'arrivesTo');
 
 User.compose(Ticket, 'tickets', 'bought');
-
 
 module.exports = User;

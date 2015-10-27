@@ -6,14 +6,14 @@ const Jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
 
-function validateToken(decoded, request, callback) {
+var validateToken = (decoded, request, callback) => {
     User.read(decoded.id, function (err, user) {
         if (err) return callback(err, false); // database error
         if (!user) return callback(null, false); // user not found
 
         return callback(null, true); // success
     });
-}
+};
 
 module.exports = function (server) {
 

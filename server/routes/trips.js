@@ -10,6 +10,7 @@ module.exports = function(server) {
         method: 'GET',
         path: '/api/trips',
         config: {
+            auth: false,
             validate: {
                 query: {
                     from: Joi.number().integer().required(),

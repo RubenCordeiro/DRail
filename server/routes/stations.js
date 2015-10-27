@@ -13,6 +13,7 @@ module.exports = (server) => {
         method: 'GET',
         path: '/api/stations',
         config: {
+            auth: false,
             tags: ['api']
         },
         handler: (request, reply) => {
@@ -29,6 +30,7 @@ module.exports = (server) => {
         method: 'GET',
         path: '/api/stations/{id}',
         config: {
+            auth: false,
             validate: {
                 params: {
                     id: Joi.number().integer()
@@ -50,6 +52,7 @@ module.exports = (server) => {
         method: 'POST',
         path: '/api/stations',
         config: {
+            auth: false,
             validate: {
                 payload: {
                     name: Joi.string().min(3).max(20).required(),
@@ -93,6 +96,7 @@ module.exports = (server) => {
         method: 'GET',
         path: '/api/stations/{id}/trips',
         config: {
+            auth: false,
             validate: {
                 params: {
                     id: Joi.number().integer().required()

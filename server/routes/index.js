@@ -4,6 +4,7 @@ module.exports = (server) => {
     require('./users')(server);
     require('./stations')(server);
     require('./trips')(server);
+    require('./trains')(server);
 
     // documentation route
     server.route({

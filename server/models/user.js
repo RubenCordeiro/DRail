@@ -8,7 +8,8 @@ var User = model(db, 'user');
 User.schema = {
     name: { type: String, required: true },
     username : { type: String, required: true },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    role: { type: String, required: true }
 };
 
 var CreditCard = model(db, 'credit_card');

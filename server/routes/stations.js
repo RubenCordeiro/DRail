@@ -105,14 +105,22 @@ module.exports = (server) => {
             tags: ['api']
         },
         handler: (request, reply) => {
-            db.query('MATCH (from:station)-[trips:trip]->(destination:station) WHERE ID(from) = {stationId} RETURN trips',
+            db.query('MATCH (from:station)-[trips:trip]->(destination:station) WHERE ID(from) = {stationId} RETURN trips, destination',
                 {
                     stationId: request.params.id
                 },
                 (err, trips) => {
                     if (err) return reply(Boom.badImplementation('Internal server error', err));
 
-                    return reply(Lazy(trips).pluck("properties").toArray());
+
+                    var formattedTrips = Lazy(trips).map((trip) => {
+                        var ret = trip.trips.properties;
+                        ret.id = trip.trips.id;
+                        ret.destination = trip.destination;
+                        return ret;
+                    });
+
+                    return reply(formattedTrips.toArray());
                 });
         }
     });

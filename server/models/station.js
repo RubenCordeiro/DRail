@@ -4,7 +4,8 @@ const db = require('seraph')(require('config').get('database'));
 
 var Station = require('seraph-model')(db, 'station');
 Station.schema = {
-    name: { type: String, required: true }
+    name: { type: String, required: true },
+    isCentral: { type: Boolean, default: false }
 };
 Station.setUniqueKey('name');
 

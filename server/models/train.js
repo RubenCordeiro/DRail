@@ -5,7 +5,8 @@ const model = require('seraph-model');
 
 var Train = model(db, 'train');
 Train.schema = {
-    name: {type: String, required: true}
+    name: {type: String, required: true},
+    capacity: {type: Number, min: 0}
 };
 Train.setUniqueKey('name');
 

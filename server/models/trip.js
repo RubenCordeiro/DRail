@@ -5,11 +5,12 @@ const db = require('seraph')(require('config').get('database'));
 
 module.exports = {
 
-    save: (departureStationId, arrivalStationId, departureTime, arrivalTime, trainId, callback) => {
+    save: (departureStationId, arrivalStationId, departureDate, arrivalDate, trainId, distance, callback) => {
         db.relate(departureStationId, 'trip', arrivalStationId, {
-            departureTime: departureTime,
-            arrivalTime: arrivalTime,
-            traindId: trainId
+            departureTime: departureDate,
+            arrivalTime: arrivalDate,
+            trainId: trainId,
+            distance: distance
         }, (err, relationship) => {
 
             if (err) return callback(err, null);

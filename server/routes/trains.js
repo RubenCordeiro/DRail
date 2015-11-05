@@ -69,6 +69,10 @@ module.exports = function(server) {
                     return reply(Boom.badRequest('Internal server error'));
                 }
 
+                if (trains && trains.length > 0) {
+                    return reply(Boom.badRequest('A train with the given name already exists'));
+                }
+
                 Train.save({ name: request.payload.name }, (err, newTrain) => {
                     if (err) {
                         server.log(['error', 'database'], err);

@@ -23,12 +23,11 @@ User.compose(CreditCard, 'creditCards', 'owns');
 
 var Ticket = model(db, 'ticket');
 Ticket.schema = {
-    id: { type: String, required: true },
-    date: { type: Date, required: true },
+    creationDate: { type: Date, required: true },
     trips: { type: Array, required: true } // array of trip ID's
 };
 Ticket.addComputedField('signature', function(ticket) {
-    return Sha1(ticket.id.toString() + ticket.date.getTime().toString());
+    return Sha1(ticket.id.toString() + ticket.creationDate).toString();
 });
 
 var Train = require('./train');

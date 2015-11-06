@@ -40,7 +40,11 @@ module.exports = function (server) {
                     name: Joi.string().required(),
                     username: Joi.string().required(),
                     password: Joi.string().required(),
-                    role: Joi.string().allow(['passenger', 'inspector'])
+                    role: Joi.string().allow(['passenger', 'inspector']),
+                    creditCards: Joi.array().items(Joi.object().keys({
+                        expireDate: Joi.date().required(),
+                        number: Joi.string().creditCard().required()
+                    })).required()
                 }
             },
             auth: false,
@@ -113,6 +117,56 @@ module.exports = function (server) {
                         role: user.role
                     }, require('config').get('jwt'))
                 });
+            });
+        }
+    });
+
+    server.route({
+        method: 'GET',
+        path: '/api/users',
+        config: {
+            auth: false,
+            tags: ['api']
+        },
+        handler: (request, reply) => {
+            User.findAll((err, users) => {
+                if (err) {
+                    server.log(['error', 'database'], err);
+                    return reply(Boom.badImplementation('Internal server error'));
+                }
+
+                return reply(users.map((user) => {
+                    user.password = undefined;
+                    return user;
+                }));
+            });
+        }
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/api/users/{id}/creditCards',
+        config: {
+            auth: false,
+            validate: {
+                params: {
+                    id: Joi.number().integer().required()
+                },
+                payload: {
+                    number: Joi.string().creditCard().required(),
+                    expireDate: Joi.date().required()
+                }
+            },
+            tags: ['api']
+        },
+        handler: (request, reply) => {
+            User.push(request.params.id, 'creditCards', request.payload, (err, creditCards) => {
+                if (err) {
+                    server.log(['error', 'database'], err);
+                    return reply(err);
+                }
+
+                return reply(creditCards);
             });
         }
     });

@@ -13,6 +13,10 @@ User.schema = {
 };
 
 var CreditCard = model(db, 'credit_card');
+CreditCard.schema = {
+    number: { type: String, required: true },
+    expireDate: { type: Date, required: true }
+};
 User.compose(CreditCard, 'creditCards', 'owns');
 
 var Ticket = model(db, 'ticket');

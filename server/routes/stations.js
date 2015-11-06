@@ -56,6 +56,7 @@ module.exports = (server) => {
             validate: {
                 payload: {
                     name: Joi.string().min(3).max(20).required(),
+                    isCentral: Joi.boolean().required(),
                     trips: Joi.array().items(Joi.object().keys({
                         id: Joi.number().integer(),
                         departureTime: Joi.date(),
@@ -70,7 +71,7 @@ module.exports = (server) => {
         handler: (request, reply) => {
             var txn = db.batch();
 
-            var newStation = txn.save({name: request.payload.name});
+            var newStation = txn.save({name: request.payload.name, isCentral: request.payload.isCentral});
             txn.label(newStation, 'station');
             if (request.payload.trips) {
                 request.payload.trips.forEach( (trip) => {

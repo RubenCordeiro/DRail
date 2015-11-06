@@ -57,13 +57,37 @@ module.exports = {
     },
 
     findShortest: (departureStationId, arrivalStationId, callback) => {
-        db.query('MATCH (from: station {id: {departureStationId}}), (to: station {id: {arrivalStationId}}), path = shortestPath((from)-[:connected*]-(to)) WITH REDUCE(dist = 0, rel in rels(path) | dist + rel.distance) AS distance, path RETURN path, distance', {
+        db.query('MATCH (departureStation:station), (arrivalStation:station), path = shortestPath((departureStation)-[:trip*]-(arrivalStation)) WITH departureStation, arrivalStation, REDUCE(dist = 0, rel in rels(path) | dist + rel.distance) AS distance, path WHERE ID(departureStation) = {departureStationId} AND ID(arrivalStation) = {arrivalStationId} RETURN EXTRACT( n in nodes(path) | n) as stations, EXTRACT(r in relationships(path) | r) as trips, path, distance', {
             departureStationId: departureStationId,
             arrivalStationId: arrivalStationId
-        }, (err, trip) => {
+        }, (err, trips) => {
             if (err) return callback(err, null);
 
-            return callback(null, trip);
+            var indexedSations = Lazy(trips)
+                .map(function (elem) {
+                    return elem.stations;
+                })
+                .flatten()
+                .indexBy('id');
+
+            var ret = Lazy(trips)
+                .map(function (elem) {
+                    return Lazy(elem.trips)
+                        .map(function (trip) {
+                            return {
+                                start: indexedSations.get(trip.start),
+                                end: indexedSations.get(trip.end),
+                                trainId: trip.properties.trainId,
+                                departureTime: trip.properties.departureTime,
+                                arrivalTime: trip.properties.arrivalTime,
+                                distance: trip.properties.distance,
+                                tripId: trip.id
+                            }
+                        })
+                        .toArray();
+                });
+
+            return callback(null, ret.toArray());
         });
     }
 };

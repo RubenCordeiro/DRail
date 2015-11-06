@@ -11,12 +11,14 @@ User.schema = {
     password: { type: String, required: true },
     role: { type: String, required: true }
 };
+User.setUniqueKey('username');
 
 var CreditCard = model(db, 'credit_card');
 CreditCard.schema = {
     number: { type: String, required: true },
     expireDate: { type: Date, required: true }
 };
+CreditCard.setUniqueKey('number');
 User.compose(CreditCard, 'creditCards', 'owns');
 
 var Ticket = model(db, 'ticket');

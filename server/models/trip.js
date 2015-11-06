@@ -49,6 +49,24 @@ module.exports = {
                             }
                         })
                         .toArray();
+                }).filter((elem) => {
+
+                    /* evaluates whether there are two consecutive trips that have incompatible timetables */
+                    var evaluator = (trip1, trip2) => {
+
+                        if (!trip1)
+                            return null;
+
+                        if (trip1.arrivalTime <= trip2.departureTime)
+                            return trip2;
+
+
+                        return null;
+
+                    };
+                    var validTrip = Lazy(elem).reduce(evaluator);
+
+                    return validTrip !== null;
                 });
 
 
@@ -85,6 +103,25 @@ module.exports = {
                             }
                         })
                         .toArray();
+                })
+                .filter((elem) => {
+
+                    /* evaluates whether there are two consecutive trips that have incompatible timetables */
+                    var evaluator = (trip1, trip2) => {
+
+                        if (!trip1)
+                            return null;
+
+                        if (trip1.arrivalTime <= trip2.departureTime)
+                            return trip2;
+
+
+                        return null;
+
+                    };
+                    var validTrip = Lazy(elem).reduce(evaluator);
+
+                    return validTrip !== null;
                 });
 
             return callback(null, ret.toArray());

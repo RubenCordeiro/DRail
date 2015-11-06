@@ -29,8 +29,8 @@ server.register([
                 'foobar/test': 'Example foobar description'
             },
             info: {
-                title: 'Example API',
-                description: 'Powered by node, hapi, joi, hapi-swaggered, hapi-swaggered-ui and swagger-ui',
+                title: 'DRail train network webservice',
+                description: '',
                 version: '1.0'
             },
             auth: false
@@ -39,7 +39,7 @@ server.register([
     {
         register: require('hapi-swaggered-ui'),
         options: {
-            title: 'Example API',
+            title: 'DRail API',
             path: '/docs',
             swaggerOptions: {},
             auth: false

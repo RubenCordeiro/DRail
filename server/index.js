@@ -28,6 +28,9 @@ server.register([
             tags: {
                 'foobar/test': 'Example foobar description'
             },
+            tagging: {
+                pathLevel: 2
+            },
             info: {
                 title: 'DRail train network webservice',
                 description: '',

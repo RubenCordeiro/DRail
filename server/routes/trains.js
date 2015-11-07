@@ -12,17 +12,39 @@ module.exports = function(server) {
         path: '/api/trains',
         config: {
             auth: false,
+            validate: {
+                query: {
+                    departureStation: Joi.number().integer(),
+                    arrivalStation: Joi.number().integer(),
+                    departureDate: Joi.date()
+                }
+            },
             tags: ['api']
         },
         handler: (request, reply) => {
-            Train.findAll((err, trains) => {
-                if (err) {
-                    server.log(['error', 'database'], err);
-                    return reply(Boom.badImplementation('Internal server error'));
-                }
 
-                return reply(trains);
-            });
+            var query = request.query;
+
+            /* filter trains */
+            if (query.departureStation && query.arrivalStation && query.departureDate) {
+                Train.customMethods.filter(query.departureStation, query.arrivalStation, query.departureDate, (err, trains) => {
+                    if (err) {
+                        server.log(['error', 'database'], err);
+                        return reply(Boom.badImplementation('Internal server error'));
+                    }
+
+                    return reply(trains);
+                })
+            } else {
+                Train.findAll((err, trains) => {
+                    if (err) {
+                        server.log(['error', 'database'], err);
+                        return reply(Boom.badImplementation('Internal server error'));
+                    }
+
+                    return reply(trains);
+                });
+            }
         }
     });
 

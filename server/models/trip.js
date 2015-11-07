@@ -7,8 +7,8 @@ module.exports = {
 
     save: (departureStationId, arrivalStationId, departureDate, arrivalDate, trainId, distance, callback) => {
         db.relate(departureStationId, 'trip', arrivalStationId, {
-            departureTime: departureDate,
-            arrivalTime: arrivalDate,
+            departureDate: departureDate,
+            arrivalDate: arrivalDate,
             trainId: trainId,
             distance: distance
         }, (err, relationship) => {
@@ -42,8 +42,8 @@ module.exports = {
                                 start: indexedSations.get(trip.start),
                                 end: indexedSations.get(trip.end),
                                 trainId: trip.properties.trainId,
-                                departureTime: trip.properties.departureTime,
-                                arrivalTime: trip.properties.arrivalTime,
+                                departureDate: trip.properties.departureDate,
+                                arrivalDate: trip.properties.arrivalDate,
                                 distance: trip.properties.distance,
                                 tripId: trip.id
                             }
@@ -57,7 +57,7 @@ module.exports = {
                         if (!trip1)
                             return null;
 
-                        if (trip1.arrivalTime <= trip2.departureTime)
+                        if (trip1.arrivalDate <= trip2.departureDate)
                             return trip2;
 
 
@@ -96,8 +96,8 @@ module.exports = {
                                 start: indexedSations.get(trip.start),
                                 end: indexedSations.get(trip.end),
                                 trainId: trip.properties.trainId,
-                                departureTime: trip.properties.departureTime,
-                                arrivalTime: trip.properties.arrivalTime,
+                                departureDate: trip.properties.departureDate,
+                                arrivalDate: trip.properties.arrivalDate,
                                 distance: trip.properties.distance,
                                 tripId: trip.id
                             }
@@ -112,7 +112,7 @@ module.exports = {
                         if (!trip1)
                             return null;
 
-                        if (trip1.arrivalTime <= trip2.departureTime)
+                        if (trip1.arrivalDate <= trip2.departureDate)
                             return trip2;
 
 

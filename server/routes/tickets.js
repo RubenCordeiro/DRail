@@ -62,16 +62,16 @@ module.exports = (server) => {
 
 
                         var ticketDate = new Date();
-                        Lazy(ticketPaths).async().each((subpath) => {
+                        Lazy(ticketPaths).async().each(subpath => {
                             User.push(user.id, 'tickets', { creationDate: ticketDate, trips: subpath }, (err) => {
                                 if (err) {
                                     server.log(['error', 'database'], err);
                                     throw err;
                                 }
-                            })
+                            });
                         })
                         .onComplete(() => reply('Ticket created successfully').code(201))
-                        .onError((err) => { // any exception is caught here
+                        .onError(err => { // any exception is caught here
                             server.log(['error', 'database'], err);
                             reply(Boom.badImplementation('Internal server error'));
                         });

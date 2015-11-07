@@ -44,7 +44,7 @@ module.exports = function (server) {
                     creditCards: Joi.array().items(Joi.object().keys({
                         expireDate: Joi.date().required(),
                         number: Joi.string().creditCard().required()
-                    })).required()
+                    }))
                 }
             },
             auth: false,
@@ -52,14 +52,15 @@ module.exports = function (server) {
         },
         handler: (request, reply) => {
 
-            User.exists({username: request.payload.username}, (err, userExists) => {
+            User.where({ username: request.payload.username }, (err, users) => {
 
                 if (err) {
                     server.log(['error', 'database'], err);
                     return reply(Boom.badImplementation('Internal server error'));
                 }
 
-                if (userExists) return reply(Boom.badRequest('A user with the given username already exists'));
+                if (users && users.length > 0)
+                    return reply(Boom.badRequest('A user with the given username already exists'));
 
                 User.save(request.payload, (err, newUser) => {
                     if (err) {

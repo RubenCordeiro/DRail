@@ -55,7 +55,7 @@ module.exports = (server) => {
             auth: false,
             validate: {
                 payload: {
-                    name: Joi.string().min(3).max(20).required(),
+                    name: Joi.string().min(1).max(20).required(),
                     isCentral: Joi.boolean().required(),
                     latitude: Joi.number().required(),
                     longitude: Joi.number().required(),

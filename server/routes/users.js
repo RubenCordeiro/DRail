@@ -43,7 +43,7 @@ module.exports = function (server) {
                     role: Joi.string().allow(['passenger', 'inspector']),
                     creditCards: Joi.array().items(Joi.object().keys({
                         expireDate: Joi.date().required(),
-                        number: Joi.string().creditCard().required()
+                        number: Joi.string().required()
                     }))
                 }
             },

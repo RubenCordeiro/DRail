@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports = (server) => {
+    require('./graph')(server);
     require('./users')(server);
     require('./stations')(server);
     require('./trips')(server);
@@ -15,7 +16,7 @@ module.exports = (server) => {
             auth: false
         },
         handler: (request, reply) => {
-            reply.redirect('/docs')
+            reply.redirect('/docs');
         }
     });
 };

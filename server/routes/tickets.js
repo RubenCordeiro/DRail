@@ -27,7 +27,8 @@ module.exports = (server) => {
         handler: (request, reply) => {
             var query = request.query;
 
-            if (query.departureStation && query.arrivalStation && query.trainId && query.departureDate) {
+            if (typeof query.departureStation !== 'undefined' && typeof query.arrivalStation !== 'undefined' &&
+                typeof query.trainId !== 'undefined' && query.departureDate) {
                 Ticket.customMethods.filter(query.departureStation, query.arrivalStation, query.departureDate,
                     query.trainId, (err, tickets) => {
                         if (err) {

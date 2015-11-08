@@ -26,7 +26,7 @@ module.exports = function(server) {
             var query = request.query;
 
             /* filter trains */
-            if (query.departureStation && query.arrivalStation && query.departureDate) {
+            if (typeof query.departureStation != 'undefined' && typeof query.arrivalStation != 'undefined' && query.departureDate) {
                 Train.customMethods.filter(query.departureStation, query.arrivalStation, query.departureDate, (err, trains) => {
                     if (err) {
                         server.log(['error', 'database'], err);

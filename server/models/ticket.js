@@ -15,3 +15,5 @@ Ticket.addComputedField('signature', function(ticket) {
 
 var Train = require('./train');
 Ticket.compose(Train, 'train', 'belongsTo');
+
+module.exports = Ticket;

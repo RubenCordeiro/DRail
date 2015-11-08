@@ -57,6 +57,8 @@ module.exports = (server) => {
                 payload: {
                     name: Joi.string().min(3).max(20).required(),
                     isCentral: Joi.boolean().required(),
+                    latitude: Joi.number().required(),
+                    longitude: Joi.number().required(),
                     trips: Joi.array().items(Joi.object().keys({
                         id: Joi.number().integer(),
                         departureTime: Joi.date(),
@@ -71,7 +73,12 @@ module.exports = (server) => {
         handler: (request, reply) => {
             var txn = db.batch();
 
-            var newStation = txn.save({name: request.payload.name, isCentral: request.payload.isCentral});
+            var newStation = txn.save({
+                name: request.payload.name,
+                isCentral: request.payload.isCentral,
+                latitude: request.payload.latitude,
+                longitude: request.payload.longitude
+            });
             txn.label(newStation, 'station');
             if (request.payload.trips) {
                 request.payload.trips.forEach( (trip) => {

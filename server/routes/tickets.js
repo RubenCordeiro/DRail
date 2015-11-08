@@ -26,8 +26,19 @@ module.exports = (server) => {
         },
         handler: (request, reply) => {
             var query = request.query;
-            Ticket.customMethods.filter(query.departureStation, query.arrivalStation, query.departureDate,
-                query.trainId, (err, tickets) => {
+
+            if (query.departureStation && query.arrivalStation && query.trainId && query.departureDate) {
+                Ticket.customMethods.filter(query.departureStation, query.arrivalStation, query.departureDate,
+                    query.trainId, (err, tickets) => {
+                        if (err) {
+                            server.log(['error', 'database'], err);
+                            return reply(Boom.badImplementation('Internal server error'));
+                        }
+
+                        return reply(tickets);
+                    });
+            } else {
+                Ticket.findAll((err, tickets) => {
                     if (err) {
                         server.log(['error', 'database'], err);
                         return reply(Boom.badImplementation('Internal server error'));
@@ -35,8 +46,60 @@ module.exports = (server) => {
 
                     return reply(tickets);
                 });
+            }
         }
 
+    });
+
+    server.route({
+        method: 'POST',
+        path: '/api/tickets/validate',
+        config: {
+            auth: false,
+            validate: {
+                payload: {
+                    tickets: Joi.array().items(Joi.object().keys({
+                        id: Joi.string().required().description('Internal ticket ID'),
+                        status: Joi.string().allow(['noShow', 'validated', 'pending']).required()
+                            .description('New ticket status (noShow | validated | pending)')
+                    })).required().description('Collection of tickets to be updated')
+                }
+            },
+            tags: ['api']
+        },
+        handler: (request, reply) => {
+            Lazy(request.payload.tickets)
+                .async()
+                .each(ticket => {
+                    Ticket.read(ticket.id, (err, ticketInstance) => {
+
+                        if (err) {
+                            throw err;
+                        }
+
+                        if (!ticketInstance) {
+                            server.log(['error', 'ticket_validation'],
+                                { message: 'Ticket with ID: ' + ticket.id + ' was not found in the database'});
+
+                        } else {
+                            ticketInstance.status = ticket.status;
+                            Ticket.save(ticketInstance, (err) => {
+                                if (err) {
+                                    throw err;
+                                }
+                            });
+                        }
+
+                    });
+                })
+                .onComplete(() => {
+                    return reply('The tickets were successfully updated');
+                })
+                .onError(err => {
+                    server.log(['error', 'database'], err);
+                    return reply(Boom.badImplementation('Internal server error'));
+                });
+        }
     });
 
     server.route({
@@ -93,18 +156,18 @@ module.exports = (server) => {
 
                         var ticketDate = new Date();
                         Lazy(ticketPaths).async().each(subpath => {
-                            User.push(user.id, 'tickets', { creationDate: ticketDate, trips: subpath }, (err) => {
-                                if (err) {
-                                    server.log(['error', 'database'], err);
-                                    throw err;
-                                }
+                                User.push(user.id, 'tickets', { creationDate: ticketDate, trips: subpath, status: 'pending' }, (err) => {
+                                    if (err) {
+                                        server.log(['error', 'database'], err);
+                                        throw err;
+                                    }
+                                });
+                            })
+                            .onComplete(() => reply('Ticket created successfully').code(201))
+                            .onError(err => { // any exception is caught here
+                                server.log(['error', 'database'], err);
+                                reply(Boom.badImplementation('Internal server error'));
                             });
-                        })
-                        .onComplete(() => reply('Ticket created successfully').code(201))
-                        .onError(err => { // any exception is caught here
-                            server.log(['error', 'database'], err);
-                            reply(Boom.badImplementation('Internal server error'));
-                        });
                     });
             });
         }

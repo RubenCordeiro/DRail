@@ -7,7 +7,8 @@ const model = require('seraph-model');
 var Ticket = model(db, 'ticket');
 Ticket.schema = {
     creationDate: { type: Date, required: true },
-    trips: { type: Array, required: true } // array of trip ID's
+    trips: { type: Array, required: true }, // array of trip ID's
+    status: { type: String, required: true, default: 'pending'}
 };
 Ticket.addComputedField('signature', function(ticket) {
     return Sha1(ticket.id.toString() + ticket.creationDate).toString();

@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import retrofit.Call;
+import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
 import retrofit.GsonConverterFactory;
@@ -55,27 +57,48 @@ public class MainActivity extends AppCompatActivity {
         ApiService.DRail service = retrofit.create(ApiService.DRail.class);
 
         Call<List<ApiService.Station>> stationsRequest = service.listStations("token");
-        String[] stations;
-        try {
-            Response<List<ApiService.Station>> stationsResponse = stationsRequest.execute();
-            List<ApiService.Station> stationList = stationsResponse.body();
-            List<String> stationNames = new ArrayList<>();
+        stationsRequest.enqueue(new Callback<List<ApiService.Station>>() {
+            @Override
+            public void onResponse(Response<List<ApiService.Station>> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    List<ApiService.Station> stationList = response.body();
+                    final List<String> stationNames = new ArrayList<>();
 
-            for (ApiService.Station s : stationList) {
-                stationNames.add(s.name);
+                    for (ApiService.Station s : stationList) {
+                        stationNames.add(s.name);
+                    }
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            editTextDepartureStation.setItems(stationNames);
+                            editTextArrivalStation.setItems(stationNames);
+                        }
+                    });
+                } else {
+                    Log.d("Error", response.raw().request().urlString());
+                }
             }
 
-            stations = (String[]) stationNames.toArray();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            stations = new String[]{};
-        }
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
 
         editTextDepartureStation = (ClickToSelectEditText) findViewById(R.id.text_input_departure_station);
         editTextArrivalStation = (ClickToSelectEditText) findViewById(R.id.text_input_arrival_station);
-        editTextDepartureStation.setItems(stations);
-        editTextArrivalStation.setItems(stations);
+
+        editTextTimePicker = (TimePickerEditText) findViewById(R.id.text_input_time);
+        editTextTimePicker.setOnTimeSetListener(new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                HourOfDay = hourOfDay;
+                Minute = minute;
+            }
+        });
+        editTextTimePicker.configureOnClickListener(getFragmentManager());
+
         editTextDepartureStation.setOnItemSelectedListener(new ClickToSelectEditText.OnItemSelectedListener<String>() {
             @Override
             public void onItemSelectedListener(String item, int selectedIndex) {
@@ -88,16 +111,6 @@ public class MainActivity extends AppCompatActivity {
                 selectedArrivalStation = item;
             }
         });
-
-        editTextTimePicker = (TimePickerEditText) findViewById(R.id.text_input_time);
-        editTextTimePicker.setOnTimeSetListener(new TimePickerDialog.OnTimeSetListener() {
-            @Override
-            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                HourOfDay = hourOfDay;
-                Minute = minute;
-            }
-        });
-        editTextTimePicker.configureOnClickListener(getFragmentManager());
     }
 
     @Override

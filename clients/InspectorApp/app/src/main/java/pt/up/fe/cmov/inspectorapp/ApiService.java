@@ -8,7 +8,7 @@ import retrofit.http.Header;
 
 public final class ApiService {
 
-    public static final String API_URL = "http://localhost:3000/api";
+    public static final String API_URL = "http://192.168.56.1:3000";
 
     public static class Station {
         public final int id;
@@ -23,7 +23,7 @@ public final class ApiService {
     }
 
     public interface DRail {
-        @GET("/stations")
+        @GET("/api/stations")
         Call<List<Station>> listStations(@Header("Bearer") String bearer);
     }
 

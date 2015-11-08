@@ -10,9 +10,11 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.EditText;
 
+import java.util.List;
+
 public class ClickToSelectEditText extends EditText {
 
-    String[] mItems;
+    List<String> mItems;
     CharSequence mHint;
 
     OnItemSelectedListener<String> onItemSelectedListener;
@@ -49,7 +51,7 @@ public class ClickToSelectEditText extends EditText {
         setClickable(true);
     }
 
-    public void setItems(String[] items) {
+    public void setItems(List<String> items) {
         this.mItems = items;
 
         configureOnClickListener();
@@ -61,13 +63,13 @@ public class ClickToSelectEditText extends EditText {
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 builder.setTitle(mHint);
-                builder.setItems(mItems, new DialogInterface.OnClickListener() {
+                builder.setItems(mItems.toArray(new String[mItems.size()]), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int selectedIndex) {
-                        setText(mItems[selectedIndex]);
+                        setText(mItems.get(selectedIndex));
 
                         if (onItemSelectedListener != null) {
-                            onItemSelectedListener.onItemSelectedListener(mItems[selectedIndex], selectedIndex);
+                            onItemSelectedListener.onItemSelectedListener(mItems.get(selectedIndex), selectedIndex);
                         }
                     }
                 });

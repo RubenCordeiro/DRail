@@ -4,9 +4,40 @@ const Boom = require('boom'),
     Joi = require('joi'),
     Lazy = require('lazy.js');
 
-const User = require('../models/user');
+const User = require('../models/user'),
+    Ticket = require('../models/ticket');
 
 module.exports = (server) => {
+
+    server.route({
+        method: 'GET',
+        path: '/api/tickets',
+        config: {
+            auth: false,
+            validate: {
+                query: {
+                    departureStation: Joi.number().integer(),
+                    arrivalStation: Joi.number().integer(),
+                    trainId: Joi.number().integer(),
+                    departureDate: Joi.date()
+                }
+            },
+            tags: ['api']
+        },
+        handler: (request, reply) => {
+            var query = request.query;
+            Ticket.customMethods.filter(query.departureStation, query.arrivalStation, query.departureDate,
+                query.trainId, (err, tickets) => {
+                    if (err) {
+                        server.log(['error', 'database'], err);
+                        return reply(Boom.badImplementation('Internal server error'));
+                    }
+
+                    return reply(tickets);
+                });
+        }
+
+    });
 
     server.route({
         method: 'POST',
@@ -59,7 +90,6 @@ module.exports = (server) => {
 
                         var ticketPaths = trip.reduce(reducer, [[]]).filter((path) => path.length > 0)
                             .map((subpath) => subpath.map((segment) => segment.tripId));
-
 
                         var ticketDate = new Date();
                         Lazy(ticketPaths).async().each(subpath => {

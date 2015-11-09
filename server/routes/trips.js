@@ -54,8 +54,8 @@ module.exports = function(server) {
                     from: Joi.number().integer().required(),
                     to: Joi.number().integer().required(),
                     distance: Joi.number().integer().required(),
-                    departureDate: Joi.date().required(),
-                    arrivalDate: Joi.date().required(),
+                    departureDate: Joi.date().format('HH:mm:ss').raw().required(),
+                    arrivalDate: Joi.date().format('HH:mm:ss').raw().required(),
                     trainId: Joi.number().integer().required()
                 }
             },

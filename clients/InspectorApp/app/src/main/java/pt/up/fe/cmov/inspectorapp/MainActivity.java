@@ -10,10 +10,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TimePicker;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import retrofit.Call;
@@ -30,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
     String selectedDepartureStation;
     String selectedArrivalStation;
-    int HourOfDay;
-    int Minute;
+    int hourOfDay;
+    int minute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,20 +53,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ApiService.API_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        ApiService.DRail service = retrofit.create(ApiService.DRail.class);
-
-        Call<List<ApiService.Station>> stationsRequest = service.listStations("token");
+        Call<List<ApiService.Station>> stationsRequest = ApiService.service.listStations("token");
         stationsRequest.enqueue(new Callback<List<ApiService.Station>>() {
             @Override
             public void onResponse(Response<List<ApiService.Station>> response, Retrofit retrofit) {
                 if (response.isSuccess()) {
                     List<ApiService.Station> stationList = response.body();
-                    final List<String> stationNames = new ArrayList<>();
+                    final List<String> stationNames = new ArrayList<>(stationList.size());
 
                     for (ApiService.Station s : stationList) {
                         stationNames.add(s.name);
@@ -93,8 +90,8 @@ public class MainActivity extends AppCompatActivity {
         editTextTimePicker.setOnTimeSetListener(new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                HourOfDay = hourOfDay;
-                Minute = minute;
+                MainActivity.this.hourOfDay = hourOfDay;
+                MainActivity.this.minute = minute;
             }
         });
         editTextTimePicker.configureOnClickListener(getFragmentManager());
@@ -105,10 +102,47 @@ public class MainActivity extends AppCompatActivity {
                 selectedDepartureStation = item;
             }
         });
+
         editTextArrivalStation.setOnItemSelectedListener(new ClickToSelectEditText.OnItemSelectedListener<String>() {
             @Override
             public void onItemSelectedListener(String item, int selectedIndex) {
                 selectedArrivalStation = item;
+            }
+        });
+
+        Button listTrainsButton = (Button) findViewById(R.id.list_trains_button);
+        listTrainsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DateFormat dateFormat = new SimpleDateFormat();
+                Calendar cal = Calendar.getInstance();
+                cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                cal.set(Calendar.MINUTE, minute);
+
+                Call<List<ApiService.Train>> trainsRequest = ApiService.service.listTrains("token",
+                        selectedDepartureStation, selectedArrivalStation, dateFormat.format(cal.getTime()));
+                trainsRequest.enqueue(new Callback<List<ApiService.Train>>() {
+                    @Override
+                    public void onResponse(Response<List<ApiService.Train>> response, Retrofit retrofit) {
+                        if (response.isSuccess()) {
+                            List<ApiService.Train> trainList = response.body();
+
+
+
+                        } else {
+                            try {
+                                Log.d("Error", response.errorBody().string());
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Log.d("Error", t.getMessage());
+                    }
+                });
             }
         });
     }

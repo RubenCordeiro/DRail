@@ -3,12 +3,30 @@ package pt.up.fe.cmov.inspectorapp;
 import java.util.List;
 
 import retrofit.Call;
+import retrofit.GsonConverterFactory;
+import retrofit.Retrofit;
 import retrofit.http.GET;
 import retrofit.http.Header;
+import retrofit.http.Query;
 
 public final class ApiService {
 
     public static final String API_URL = "http://192.168.56.1:3000";
+
+    public static final ApiService.DRail service = new Retrofit.Builder()
+            .baseUrl(ApiService.API_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build().create(ApiService.DRail.class);
+
+    public static class Train {
+        public final int id;
+        public final String date;
+
+        public Train(int id, String date) {
+            this.id = id;
+            this.date = date;
+        }
+    }
 
     public static class Station {
         public final int id;
@@ -25,6 +43,9 @@ public final class ApiService {
     public interface DRail {
         @GET("/api/stations")
         Call<List<Station>> listStations(@Header("Bearer") String bearer);
-    }
 
+        @GET("/api/trains")
+        Call<List<Train>> listTrains(@Header("Bearer") String bearer, @Query("departureStation") String departureStation,
+                                     @Query("arrivalStation") String arrivalStation, @Query("departureDate") String departureDate);
+    }
 }

@@ -17,10 +17,7 @@ module.exports = (server) => {
             auth: false,
             validate: {
                 query: {
-                    departureStation: Joi.number().integer(),
-                    arrivalStation: Joi.number().integer(),
-                    trainId: Joi.number().integer(),
-                    departureDate: Joi.date()
+                    trips: Joi.array().items(Joi.number().integer())
                 }
             },
             tags: ['api']
@@ -28,10 +25,9 @@ module.exports = (server) => {
         handler: (request, reply) => {
             var query = request.query;
 
-            if (typeof query.departureStation !== 'undefined' && typeof query.arrivalStation !== 'undefined' &&
-                typeof query.trainId !== 'undefined' && query.departureDate) {
-                Ticket.customMethods.filter(query.departureStation, query.arrivalStation, query.departureDate,
-                    query.trainId, (err, tickets) => {
+            if (typeof query.trips !== 'undefined') {
+                Ticket.customMethods.filter(query.trips,
+                    (err, tickets) => {
                         if (err) {
                             server.log(['error', 'database'], err);
                             return reply(Boom.badImplementation('Internal server error'));

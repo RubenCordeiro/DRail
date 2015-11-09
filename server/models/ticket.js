@@ -18,16 +18,10 @@ var Train = require('./train');
 Ticket.compose(Train, 'train', 'belongsTo');
 
 Ticket.customMethods = {
-    filter: (departureStationId, arrivalStationId, departureDate, trainId, callback) => {
-        db.query('MATCH path = (departureStation:station)-[trips:trip*]->(arrivalStation:station) ' +
-            'WHERE ID(departureStation) = {departureStationId} AND ID(arrivalStation) = {arrivalStationId} AND ALL(r in relationships(path) ' +
-            'WHERE r.departureDate >= {departureDate} AND r.trainId = {trainId}) WITH path MATCH (tickets:ticket) ' +
-            'WHERE ANY(r in relationships(path) WHERE ID(r) IN tickets.trips) RETURN tickets',
+    filter: (trips, callback) => {
+        db.query('MATCH (tickets:ticket) WHERE ANY (trip in tickets.trips WHERE trip IN {trips}) RETURN DISTINCT(tickets)',
             {
-                departureStationId: departureStationId,
-                arrivalStationId: arrivalStationId,
-                departureDate: departureDate,
-                trainId: trainId
+                trips: trips
             },
             (err, results) =>{
                 if (err) {

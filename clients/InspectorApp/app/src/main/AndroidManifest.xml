@@ -32,8 +32,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="pt.up.fe.cmov.inspectorapp.MainActivity" />
         </activity>
-        <activity android:name=".TrainActivity" >
-        </activity>
     </application>
 
 </manifest>

@@ -1,11 +1,13 @@
 package pt.up.fe.cmov.inspectorapp;
 
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.TransitionPropagation;
 import android.util.Log;
 import android.view.View;
 import android.view.Menu;
@@ -13,12 +15,18 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TimePicker;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit.Call;
 import retrofit.Callback;
@@ -26,7 +34,10 @@ import retrofit.Response;
 import retrofit.Retrofit;
 import retrofit.GsonConverterFactory;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements TripsFragment.OnFragmentInteractionListener {
+
+    public final static String EXTRA_TRIPS_LIST = "pt.up.fe.cmov.inspectorapp.TRIPS_LISTS";
+
 
     ClickToSelectEditText editTextDepartureStation;
     ClickToSelectEditText editTextArrivalStation;
@@ -36,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     String selectedArrivalStation;
     int hourOfDay;
     int minute;
+    Map<String, Integer> stationIds = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,14 +56,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
         Call<List<ApiService.Station>> stationsRequest = ApiService.service.listStations("token");
         stationsRequest.enqueue(new Callback<List<ApiService.Station>>() {
@@ -63,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
                     for (ApiService.Station s : stationList) {
                         stationNames.add(s.name);
+                        stationIds.put(s.name, s.id);
                     }
 
                     runOnUiThread(new Runnable() {
@@ -114,20 +127,28 @@ public class MainActivity extends AppCompatActivity {
         listTrainsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DateFormat dateFormat = new SimpleDateFormat();
-                Calendar cal = Calendar.getInstance();
-                cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                cal.set(Calendar.MINUTE, minute);
 
-                Call<List<ApiService.Train>> trainsRequest = ApiService.service.listTrains("token",
-                        selectedDepartureStation, selectedArrivalStation, dateFormat.format(cal.getTime()));
-                trainsRequest.enqueue(new Callback<List<ApiService.Train>>() {
+                Call<List<List<ApiService.Trip>>> tripsRequest = ApiService.service.listTrips("token",
+                        stationIds.get(selectedDepartureStation), stationIds.get(selectedArrivalStation));
+                tripsRequest.enqueue(new Callback<List<List<ApiService.Trip>>>() {
                     @Override
-                    public void onResponse(Response<List<ApiService.Train>> response, Retrofit retrofit) {
+                    public void onResponse(Response<List<List<ApiService.Trip>>> response, Retrofit retrofit) {
                         if (response.isSuccess()) {
-                            List<ApiService.Train> trainList = response.body();
+                            List<List<ApiService.Trip>> tripsList = response.body();
 
+                            ArrayList<ArrayList<ApiService.Trip>> al = new ArrayList<>(tripsList.size());
+                            for (List<ApiService.Trip> trips : tripsList) {
+                                if (trips.size() > 0 &&
+                                    trips.get(0).departureDate.compareTo(String.format("%02d:%02d", hourOfDay, minute)) >= 0)
+                                    al.add(new ArrayList<>(trips));
+                            }
 
+                            TripsFragment tripsFragment = (TripsFragment)
+                                getSupportFragmentManager().findFragmentById(R.id.trips_fragment);
+
+                            if (tripsFragment != null) {
+                                tripsFragment.updateTripsView(al);
+                            }
 
                         } else {
                             try {
@@ -167,5 +188,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(String id) {
+
     }
 }

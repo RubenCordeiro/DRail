@@ -1,5 +1,6 @@
 package pt.up.fe.cmov.inspectorapp;
 
+import java.io.Serializable;
 import java.util.List;
 
 import retrofit.Call;
@@ -40,12 +41,27 @@ public final class ApiService {
         }
     }
 
+    public static class Trip implements Serializable {
+        public final int id;
+        public final String departureDate;
+        public final String arrivalDate;
+        public final int trainId;
+
+        public Trip(int id, String departureDate, String arrivalDate, int trainId) {
+            this.id = id;
+            this.departureDate = departureDate;
+            this.arrivalDate = arrivalDate;
+            this.trainId = trainId;
+        }
+    }
+
     public interface DRail {
         @GET("/api/stations")
         Call<List<Station>> listStations(@Header("Bearer") String bearer);
 
-        @GET("/api/trains")
-        Call<List<Train>> listTrains(@Header("Bearer") String bearer, @Query("departureStation") String departureStation,
-                                     @Query("arrivalStation") String arrivalStation, @Query("departureDate") String departureDate);
+        @GET("/api/trips")
+        Call<List<List<Trip>>> listTrips(@Header("Bearer") String bearer,
+                                         @Query("from") int departureStationId,
+                                         @Query("to") int arrivalStationId);
     }
 }

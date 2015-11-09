@@ -20,4 +20,6 @@
     <string name="hint_job_category">Job Category</string>
     <string name="prompt_time">Departure Time</string>
     <string name="action_list_trains">List Trains</string>
+    <string name="title_test_list">Tests</string>
+    <string name="title_test_detail">Test Detail</string>
 </resources>

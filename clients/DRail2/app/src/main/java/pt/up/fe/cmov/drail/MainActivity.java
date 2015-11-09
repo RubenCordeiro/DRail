@@ -30,7 +30,8 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements SchedulingFragment.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements SchedulingFragment.OnFragmentInteractionListener,
+        LoginFragment.OnFragmentInteractionListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements SchedulingFragmen
                 case 1:
                     return TicketListFragment.newInstance(position + 1);
                 case 2:
-                    return PlaceholderFragment.newInstance(position + 1);
+                    return LoginFragment.newInstance(position + 1);
                 default:
                     return null;
             }

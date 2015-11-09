@@ -7,6 +7,7 @@ var trip = {
     "trainId": 8
 };
 
+var requestS = require('sync-request');
 var request = require('request');
 
 function postTrip(t) {
@@ -45,64 +46,82 @@ function postTrain(t) {
     });
 }
 
-postStation({
+function postTripS(t) {
+    requestS('POST', 'http://localhost:3000/api/trips', {
+        json: t
+    });
+}
+
+function postStationS(s) {
+    requestS('POST', 'http://localhost:3000/api/stations', {
+        json: s
+    });
+}
+
+function postTrainS(t) {
+    requestS('POST', 'http://localhost:3000/api/trains', {
+        json: t
+    });
+}
+
+postStationS({
     "name": "A",
     "isCentral": false,
     "latitude": 0,
     "longitude": 0
 });
 
-postStation({
+postStationS({
     "name": "A1",
     "isCentral": false,
     "latitude": 0,
     "longitude": 0
 });
 
-postStation({
+postStationS({
     "name": "Central",
     "isCentral": true,
     "latitude": 0,
     "longitude": 0
 });
 
-postStation({
+postStationS({
     "name": "B1",
     "isCentral": false,
     "latitude": 0,
     "longitude": 0
 });
 
-postStation({
+postStationS({
     "name": "B",
     "isCentral": false,
     "latitude": 0,
     "longitude": 0
 });
 
-postStation({
+postStationS({
     "name": "C1",
     "isCentral": false,
     "latitude": 0,
     "longitude": 0
 });
 
-postStation({
+postStationS({
     "name": "C",
     "isCentral": false,
     "latitude": 0,
     "longitude": 0
 });
 
-postTrain({
+postTrainS({
     "name": "Red"
 });
 
-postTrain({
+postTrainS({
     "name": "Blue"
 });
 
-postTrain({
+postTrainS({
     "name": "Green"
 });
 

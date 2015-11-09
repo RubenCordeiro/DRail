@@ -16,7 +16,7 @@ module.exports = function(server) {
                 query: {
                     departureStation: Joi.number().integer(),
                     arrivalStation: Joi.number().integer(),
-                    departureDate: Joi.date()
+                    departureDate: Joi.date().format('HH:mm:ss').raw().required()
                 }
             },
             tags: ['api']

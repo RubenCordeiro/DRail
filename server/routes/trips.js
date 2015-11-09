@@ -14,33 +14,20 @@ module.exports = function(server) {
             validate: {
                 query: {
                     from: Joi.number().integer().required(),
-                    to: Joi.number().integer().required(),
-                    shortest: Joi.boolean()
+                    to: Joi.number().integer().required()
                 }
             },
             tags: ['api']
         },
         handler: (request, reply) => {
+            Trip.find(request.query.from, request.query.to, (err, results) => {
+                if (err) {
+                    server.log(['error'], err);
+                    return reply(Boom.badImplementation('Internal server error'));
+                }
 
-            if (!request.query.shortest) {
-                Trip.find(request.query.from, request.query.to, (err, trips) => {
-                    if (err) {
-                        server.log(['error', 'database'], err);
-                        return reply(Boom.badImplementation('Internal server error'));
-                    }
-
-                    return reply(trips);
-                });
-            } else {
-                Trip.findShortest(request.query.from, request.query.to, (err, trips) => {
-                    if (err) {
-                        server.log(['error', 'database'], err);
-                        return reply(Boom.badImplementation('Internal server error'));
-                    }
-
-                    return reply(trips);
-                });
-            }
+                return reply(results);
+            });
         }
     });
 

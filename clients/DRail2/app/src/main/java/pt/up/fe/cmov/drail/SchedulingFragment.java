@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,22 +60,30 @@ public class SchedulingFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    private static View view;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_scheduling, container, false);
 
-        map = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map))
-                .getMap();
-
-        Circle circle = map.addCircle(new CircleOptions()
-                .center(new LatLng(-33.87365, 151.20689))
-                .radius(10000)
-                .strokeColor(Color.RED)
-                .fillColor(Color.BLUE));
-
-        return v;
+        if (view != null) {
+            ViewGroup parent = (ViewGroup) view.getParent();
+            if (parent != null)
+                parent.removeView(view);
+        }
+        try {
+            view = inflater.inflate(R.layout.fragment_scheduling, container, false);
+            map = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map))
+                    .getMap();
+            Circle circle = map.addCircle(new CircleOptions()
+                    .center(new LatLng(-33.87365, 151.20689))
+                    .radius(10000)
+                    .strokeColor(Color.RED)
+                    .fillColor(Color.BLUE));
+        } catch (InflateException e) {
+        /* map is already there, just return view as it is */
+        }
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

@@ -21,12 +21,8 @@ import android.widget.TextView;
 import com.google.common.base.Joiner;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-
-import pt.up.fe.cmov.inspectorapp.dummy.DummyContent;
 
 public class TripsFragment extends Fragment {
 
@@ -68,10 +64,8 @@ public class TripsFragment extends Fragment {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 if (trips != null) {
-                    Log.d("Error", trips.get(position).get(0).departureDate);
-
                     Intent intent = new Intent(view.getContext(), TicketsActivity.class);
-                    //intent.putExtra(EXTRA_TOKEN, token);
+                    //intent.putExtra(EXTRA_TOKEN, trips.get(position));
                     startActivity(intent);
                 }
             }

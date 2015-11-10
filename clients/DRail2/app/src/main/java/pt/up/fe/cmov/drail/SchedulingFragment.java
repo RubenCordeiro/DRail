@@ -1,6 +1,7 @@
 package pt.up.fe.cmov.drail;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,11 +14,14 @@ import android.view.ViewGroup;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.ui.BubbleIconFactory;
+import com.google.maps.android.ui.IconGenerator;
 
 import java.util.HashMap;
 
@@ -93,14 +97,26 @@ public class SchedulingFragment extends Fragment {
         graphRequest.enqueue(new Callback<ApiService.Graph>() {
             @Override
             public void onResponse(Response<ApiService.Graph> response, Retrofit retrofit) {
-                if (response.isSuccess()) {
+                if (response.isSuccess()) { // successful request, build graph
                     ApiService.Graph graph = response.body();
 
+                    IconGenerator iconGenerator = new IconGenerator(getActivity().getApplicationContext());
+                    iconGenerator.setContentPadding(0, 0, 0, 0);
                     HashMap<Integer, ApiService.Station> indexedStations = new HashMap<>();
-                    for (ApiService.Station s: graph.stations) {
+                    for (ApiService.Station s : graph.stations) {
+
                         indexedStations.put(s.id, s);
+                        LatLng position = new LatLng(s.latitude, s.longitude);
+
+
+                        Bitmap iconBitmap = iconGenerator.makeIcon(s.name);
+                        map.addMarker(new MarkerOptions().
+                                        icon(BitmapDescriptorFactory.fromBitmap(iconBitmap))
+                                .position(position)
+                        );
+
                         map.addCircle(new CircleOptions()
-                                .center(new LatLng(s.latitude, s.longitude))
+                                .center(position)
                                 .radius(70)
                                 .fillColor(Color.BLUE)
                                 .strokeWidth(1));
@@ -108,10 +124,13 @@ public class SchedulingFragment extends Fragment {
 
                     ApiService.Station source, target;
                     for (ApiService.GraphEdge e: graph.trips) {
+
                         source = indexedStations.get(e.start);
                         target = indexedStations.get(e.end);
+
                         map.addPolyline(new PolylineOptions()
-                        .add(new LatLng(source.latitude, source.longitude), new LatLng(target.latitude, target.longitude))
+                        .add(new LatLng(source.latitude,
+                                source.longitude), new LatLng(target.latitude, target.longitude))
                                 .width(3).color(Color.RED));
                     }
                 } else {

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,14 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.HashMap;
+
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 
 /**
@@ -75,14 +84,45 @@ public class SchedulingFragment extends Fragment {
             view = inflater.inflate(R.layout.fragment_scheduling, container, false);
             map = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map))
                     .getMap();
-            Circle circle = map.addCircle(new CircleOptions()
-                    .center(new LatLng(-33.87365, 151.20689))
-                    .radius(10000)
-                    .strokeColor(Color.RED)
-                    .fillColor(Color.BLUE));
+
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
+
+        Call<ApiService.Graph> graphRequest = ApiService.service.getGraph("token");
+        graphRequest.enqueue(new Callback<ApiService.Graph>() {
+            @Override
+            public void onResponse(Response<ApiService.Graph> response, Retrofit retrofit) {
+                if (response.isSuccess()) {
+                    ApiService.Graph graph = response.body();
+
+                    HashMap<Integer, ApiService.Station> indexedStations = new HashMap<>();
+                    for (ApiService.Station s: graph.stations) {
+                        indexedStations.put(s.id, s);
+                        map.addCircle(new CircleOptions()
+                                .center(new LatLng(s.latitude, s.longitude))
+                                .radius(10000)
+                                .fillColor(Color.BLUE));
+                    }
+
+                    ApiService.Station source, target;
+                    for (ApiService.GraphEdge e: graph.trips) {
+                        source = indexedStations.get(e.start);
+                        target = indexedStations.get(e.end);
+                        map.addPolyline(new PolylineOptions()
+                        .add(new LatLng(source.latitude, source.longitude), new LatLng(target.latitude, target.longitude))
+                                .width(5).color(Color.RED));
+                    }
+                } else {
+                    Log.d("Error", response.raw().request().urlString());
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Log.d("Error", t.getMessage());
+            }
+        });
         return view;
     }
 

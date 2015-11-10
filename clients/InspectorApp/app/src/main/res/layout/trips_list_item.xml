@@ -12,7 +12,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
-        android:text="Trains"
+        android:text=""
         android:textSize="16sp" />
 
     <TextView
@@ -24,7 +24,6 @@
         android:layout_toLeftOf="@id/trains_text_view"
         android:layout_below="@+id/departure_date_text_view"
         android:ellipsize="marquee"
-        android:text="Arrival Date:"
         android:textSize="16sp" />
 
     <TextView
@@ -35,9 +34,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
         android:layout_toLeftOf="@id/trains_text_view"
-        android:text="Departure Date"
         android:textSize="16sp" />
-
-
 
 </RelativeLayout>

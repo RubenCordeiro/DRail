@@ -39,7 +39,7 @@ module.exports = (server) => {
             tags: ['api']
         },
         handler: (request, reply) => {
-            Station.where({id: request.params.id}, (err, station) => {
+            Station.read(request.params.id, (err, station) => {
                 if (err)
                     reply(Boom.badImplementation('Internal server error', err));
                 else

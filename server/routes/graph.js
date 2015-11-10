@@ -29,7 +29,11 @@ module.exports = (server) => {
                         trips = results.trips;
 
                     trips = Lazy(trips)
-                        .uniq('id').toArray();
+                        .uniq('id')
+                        .map((trip) => {
+                            return { start: trip.start, end: trip.end };
+                        })
+                        .toArray();
 
                     stations = Lazy(stations).uniq('id').toArray();
 

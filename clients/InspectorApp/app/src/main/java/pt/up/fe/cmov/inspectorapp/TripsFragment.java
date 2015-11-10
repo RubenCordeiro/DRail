@@ -21,6 +21,8 @@ import com.google.common.base.Joiner;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import pt.up.fe.cmov.inspectorapp.dummy.DummyContent;
 
@@ -85,7 +87,7 @@ public class TripsFragment extends Fragment {
         ArrayList<TripsItem> items = new ArrayList<>(al.size());
 
         for (ArrayList<ApiService.Trip> l : al) {
-            HashSet<Integer> trains = new HashSet<>();
+            Set<Integer> trains = new TreeSet<>();
             for (ApiService.Trip trip : l) {
                 trains.add(trip.trainId);
             }

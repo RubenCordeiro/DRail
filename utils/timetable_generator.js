@@ -67,50 +67,50 @@ function postTrainS(t) {
 postStationS({
     "name": "A",
     "isCentral": false,
-    "latitude": 0,
-    "longitude": 0
+    "latitude": 41.18326,
+    "longitude": -8.602239999999938
 });
 
 postStationS({
     "name": "A1",
     "isCentral": false,
-    "latitude": 0,
-    "longitude": 0
+    "latitude": 41.1830721,
+    "longitude": -8.605369999999994
 });
 
 postStationS({
     "name": "Central",
     "isCentral": true,
-    "latitude": 0,
-    "longitude": 0
+    "latitude": 41.152277,
+    "longitude": -8.609298999999965
 });
 
 postStationS({
     "name": "B1",
     "isCentral": false,
-    "latitude": 0,
-    "longitude": 0
+    "latitude": 41.148459,
+    "longitude": -8.611309
 });
 
 postStationS({
     "name": "B",
     "isCentral": false,
-    "latitude": 0,
-    "longitude": 0
+    "latitude": 41.145607,
+    "longitude": -8.610526
 });
 
 postStationS({
     "name": "C1",
     "isCentral": false,
-    "latitude": 0,
-    "longitude": 0
+    "latitude": 41.158585,
+    "longitude": -8.622246
 });
 
 postStationS({
     "name": "C",
     "isCentral": false,
-    "latitude": 0,
-    "longitude": 0
+    "latitude": 41.160712,
+    "longitude": -8.629127
 });
 
 postTrainS({

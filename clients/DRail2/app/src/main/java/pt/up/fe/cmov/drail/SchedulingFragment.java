@@ -101,8 +101,9 @@ public class SchedulingFragment extends Fragment {
                         indexedStations.put(s.id, s);
                         map.addCircle(new CircleOptions()
                                 .center(new LatLng(s.latitude, s.longitude))
-                                .radius(10000)
-                                .fillColor(Color.BLUE));
+                                .radius(70)
+                                .fillColor(Color.BLUE)
+                                .strokeWidth(1));
                     }
 
                     ApiService.Station source, target;
@@ -111,7 +112,7 @@ public class SchedulingFragment extends Fragment {
                         target = indexedStations.get(e.end);
                         map.addPolyline(new PolylineOptions()
                         .add(new LatLng(source.latitude, source.longitude), new LatLng(target.latitude, target.longitude))
-                                .width(5).color(Color.RED));
+                                .width(3).color(Color.RED));
                     }
                 } else {
                     Log.d("Error", response.raw().request().urlString());

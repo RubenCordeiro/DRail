@@ -1,10 +1,13 @@
 package pt.up.fe.cmov.drail;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.InflateException;
@@ -12,12 +15,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.common.api.Api;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.ui.BubbleIconFactory;
@@ -39,9 +46,19 @@ import retrofit.Retrofit;
  * Use the {@link SchedulingFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class SchedulingFragment extends Fragment {
+public class SchedulingFragment extends Fragment implements GoogleMap.OnMyLocationChangeListener, GoogleMap.OnMarkerClickListener {
+
+    public enum StationSelectionState {
+        FIRST_CLICK, SECOND_CLICK, NONE
+    }
 
     private GoogleMap map;
+    private Location currentUserLocation;
+    private HashMap<Marker, ApiService.Station> indexedMarkers = new HashMap<>();
+    private HashMap<ApiService.Station, Circle> indexedCircles = new HashMap<>();
+    private ApiService.Station firstClickedStation = null;
+    private ApiService.Station secondClickedStation = null;
+    private StationSelectionState currentSelectionState = StationSelectionState.NONE;
 
     private OnFragmentInteractionListener mListener;
 
@@ -79,6 +96,8 @@ public class SchedulingFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
+
         if (view != null) {
             ViewGroup parent = (ViewGroup) view.getParent();
             if (parent != null)
@@ -89,9 +108,21 @@ public class SchedulingFragment extends Fragment {
             map = ((SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map))
                     .getMap();
 
+            map.setOnMyLocationChangeListener(this);
+            map.setOnMarkerClickListener(this);
+
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
+
+        final FloatingActionButton actionQr = (FloatingActionButton) view.findViewById(R.id.fab);
+        actionQr.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), TripsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         Call<ApiService.Graph> graphRequest = ApiService.service.getGraph("token");
         graphRequest.enqueue(new Callback<ApiService.Graph>() {
@@ -110,27 +141,46 @@ public class SchedulingFragment extends Fragment {
 
 
                         Bitmap iconBitmap = iconGenerator.makeIcon(s.name);
-                        map.addMarker(new MarkerOptions().
+                        Marker stationMarker = map.addMarker(new MarkerOptions().
                                         icon(BitmapDescriptorFactory.fromBitmap(iconBitmap))
-                                .position(position)
+                                        .position(position)
                         );
 
-                        map.addCircle(new CircleOptions()
+                        indexedMarkers.put(stationMarker, s);
+
+                        Circle stationCircle = map.addCircle(new CircleOptions()
                                 .center(position)
                                 .radius(70)
                                 .fillColor(Color.BLUE)
                                 .strokeWidth(1));
+
+                        indexedCircles.put(s, stationCircle);
+
+                        Location stationLocation = new Location("none");
+                        stationLocation.setLongitude(s.longitude);
+                        stationLocation.setLatitude(s.latitude);
+                        if (currentUserLocation != null && currentUserLocation.distanceTo(stationLocation) <= 100) {
+                            Log.d("Location", "Camera set");
+                            CameraPosition cameraPosition = new CameraPosition.Builder()
+                                    .target(new LatLng(s.latitude, s.longitude))
+                                    .zoom(15)
+                                    .bearing(0)
+                                    .tilt(45)
+                                    .build();
+
+                            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        }
                     }
 
                     ApiService.Station source, target;
-                    for (ApiService.GraphEdge e: graph.trips) {
+                    for (ApiService.GraphEdge e : graph.trips) {
 
                         source = indexedStations.get(e.start);
                         target = indexedStations.get(e.end);
 
                         map.addPolyline(new PolylineOptions()
-                        .add(new LatLng(source.latitude,
-                                source.longitude), new LatLng(target.latitude, target.longitude))
+                                .add(new LatLng(source.latitude,
+                                        source.longitude), new LatLng(target.latitude, target.longitude))
                                 .width(3).color(Color.RED));
                     }
                 } else {
@@ -168,6 +218,44 @@ public class SchedulingFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onMyLocationChange(Location location) {
+        Log.d("Location", location.toString());
+        currentUserLocation = location;
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+
+        switch(currentSelectionState) {
+            case NONE: {
+                firstClickedStation = indexedMarkers.get(marker);
+                indexedCircles.get(firstClickedStation).setFillColor(Color.RED);
+                currentSelectionState = StationSelectionState.FIRST_CLICK;
+                break;
+            }
+            case FIRST_CLICK: {
+                secondClickedStation = indexedMarkers.get(marker);
+                indexedCircles.get(secondClickedStation).setFillColor(Color.RED);
+                currentSelectionState = StationSelectionState.SECOND_CLICK;
+                break;
+            }
+            case SECOND_CLICK: {
+                indexedCircles.get(firstClickedStation).setFillColor(Color.BLUE);
+                indexedCircles.get(secondClickedStation).setFillColor(Color.BLUE);
+
+                firstClickedStation = null;
+                secondClickedStation = null;
+                currentSelectionState = StationSelectionState.NONE;
+                break;
+            }
+            default:
+                Log.d("Extreme anomaly", "We're talking java here, anything is possible");
+        }
+
+        return true;
     }
 
     /**

@@ -136,7 +136,7 @@ module.exports = (server) => {
                 var requestedTrips = Lazy(request.payload.trips);
 
                 Async.whilst(
-                    () => requestedTrips.length() != 0,
+                    () => requestedTrips.toArray().length != 0,
                     (callback) => {
                         var consecutiveTrips = requestedTrips.takeWhile((trip) => {
                             if (trip.trainId != currentTrainId) {
@@ -144,21 +144,20 @@ module.exports = (server) => {
                                 return false;
                             } else
                                 return true;
-                        }).toArray();
+                        });
 
                         User.push(user.id, 'tickets', {
                             creationDate: currentDate,
-                            trips: consecutiveTrips,
+                            trips: consecutiveTrips.pluck("id").toArray(),
                             status: 'pending'
                         }, (err) => {
                             if (err) {
                                 return callback(err);
                             } else {
+                                requestedTrips = requestedTrips.without(consecutiveTrips.toArray());
                                 return callback(null);
                             }
                         });
-
-                        requestedTrips = requestedTrips.without(consecutiveTrips);
                     },
                     (err) => {
                         if (err) {

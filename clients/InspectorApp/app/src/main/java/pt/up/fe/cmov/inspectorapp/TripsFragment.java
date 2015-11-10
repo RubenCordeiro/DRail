@@ -1,11 +1,13 @@
 package pt.up.fe.cmov.inspectorapp;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -51,7 +53,7 @@ public class TripsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_trips, container, false);
+        final View view = inflater.inflate(R.layout.fragment_trips, container, false);
 
         mRecyclerView = (RecyclerView) view.findViewById(android.R.id.list);
         mRecyclerView.setHasFixedSize(true);
@@ -61,6 +63,19 @@ public class TripsFragment extends Fragment {
 
         mAdapter = new MyAdapter(new TripsItem[] { });
         mRecyclerView.setAdapter(mAdapter);
+
+        ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                if (trips != null) {
+                    Log.d("Error", trips.get(position).get(0).departureDate);
+
+                    Intent intent = new Intent(view.getContext(), TicketsActivity.class);
+                    //intent.putExtra(EXTRA_TOKEN, token);
+                    startActivity(intent);
+                }
+            }
+        });
 
         return view;
     }
@@ -82,7 +97,10 @@ public class TripsFragment extends Fragment {
         mListener = null;
     }
 
+    public ArrayList<ArrayList<ApiService.Trip>> trips = null;
+
     public void updateTripsView(ArrayList<ArrayList<ApiService.Trip>> al) {
+        trips = al;
 
         ArrayList<TripsItem> items = new ArrayList<>(al.size());
 

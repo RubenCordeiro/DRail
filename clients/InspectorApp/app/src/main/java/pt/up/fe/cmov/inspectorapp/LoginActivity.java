@@ -170,7 +170,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         // Check for a valid email address.
-        if (TextUtils.isEmpty(email)) {
+        if (!isPasswordValid(password)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
@@ -194,11 +194,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private boolean isEmailValid(String email) {
-        return email.contains("@");
+        return true; // return !TextUtils.isEmpty(email) && email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() > 4;
+        return true; // return !TextUtils.isEmpty(password) && password.length() > 4;
     }
 
     /**

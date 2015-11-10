@@ -32,6 +32,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="pt.up.fe.cmov.inspectorapp.MainActivity" />
         </activity>
+        <activity
+            android:name=".TicketsActivity"
+            android:label="@string/title_activity_tickets"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/AppTheme.NoActionBar" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="pt.up.fe.cmov.inspectorapp.MainActivity" />
+        </activity>
     </application>
 
 </manifest>

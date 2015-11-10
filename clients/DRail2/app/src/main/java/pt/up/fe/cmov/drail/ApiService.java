@@ -1,16 +1,19 @@
 package pt.up.fe.cmov.drail;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.http.GET;
 import retrofit.http.Header;
+import retrofit.http.Query;
 
 public final class ApiService {
 
-    public static final String API_URL = "http://192.168.1.135:3000";
+    public static final String API_URL = "http://172.30.24.41:3000";
 
     public static final ApiService.DRail service = new Retrofit.Builder()
             .baseUrl(ApiService.API_URL)
@@ -53,8 +56,25 @@ public final class ApiService {
         }
     }
 
+    public static class Trip {
+        public final int id;
+        public final Date departureDate;
+        public final Date arrivalDate;
+        public final int trainId;
+
+        public Trip(int id, Date departureDate, Date arrivalDate, int trainId) {
+            this.id = id;
+            this.departureDate = departureDate;
+            this.arrivalDate = arrivalDate;
+            this.trainId = trainId;
+        }
+    }
+
     public interface DRail {
         @GET("/api/graph")
         Call<Graph> getGraph(@Header("Bearer") String bearer);
+
+        @GET("/api/trips")
+        Call<ArrayList<ArrayList<Trip>>> getTrips(@Query("from") int from, @Query("to") int to);
     }
 }

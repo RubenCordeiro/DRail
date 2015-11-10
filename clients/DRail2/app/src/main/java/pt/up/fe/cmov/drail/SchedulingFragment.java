@@ -120,6 +120,8 @@ public class SchedulingFragment extends Fragment implements GoogleMap.OnMyLocati
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), TripsActivity.class);
+                intent.putExtra("from", SchedulingFragment.this.firstClickedStation.id);
+                intent.putExtra("to", SchedulingFragment.this.secondClickedStation.id);
                 startActivity(intent);
             }
         });

@@ -128,7 +128,7 @@ public class TripListFragment extends Fragment implements AbsListView.OnItemClic
 
             @Override
             public void onFailure(Throwable t) {
-                Log.d("Error", t.getMessage());
+                Log.d("Error", t.toString());
             }
         });
 

@@ -1,6 +1,8 @@
 package pt.up.fe.cmov.inspectorapp;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -174,8 +176,10 @@ public class TicketsActivity extends AppCompatActivity {
             public void onClick(final View view) {
                 ArrayList<ApiService.TicketValidation> ticketsValidation = new ArrayList<>();
                 for (ApiService.Ticket t : mTicketList) {
-                    if (!t.status.equalsIgnoreCase("pending"))
-                        ticketsValidation.add(new ApiService.TicketValidation(Integer.toString(t.id), t.status));
+                    if (t.status.equalsIgnoreCase("pending"))
+                        t.status = "noShow";
+
+                    ticketsValidation.add(new ApiService.TicketValidation(Integer.toString(t.id), t.status));
                 }
 
                 ApiService.TicketsValidation validation = new ApiService.TicketsValidation(ticketsValidation);
@@ -189,20 +193,55 @@ public class TicketsActivity extends AppCompatActivity {
                     public void onResponse(Response<String> response, Retrofit retrofit) {
 
                         // if (response.isSuccess()) {
-                        Toast.makeText(view.getContext(), "Uploaded scanned ticket data", Toast.LENGTH_SHORT).show();
-                        //} else {
-                        //    try {
-                        //        Log.d("Error", response.errorBody().string());
-                        //    } catch (IOException e) {
-                        //        e.printStackTrace();
-                        //    }
-                        //}
+                        Toast.makeText(view.getContext(), "Uploaded scanned2 ticket data", Toast.LENGTH_SHORT).show();
+                        try {
+                            Toast.makeText(view.getContext(), response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        int noShows = 0;
+                        for (ApiService.Ticket t : mTicketList) {
+                            if (t.status.equalsIgnoreCase("noShow"))
+                                noShows++;
+                        }
+
+                        new AlertDialog.Builder(view.getContext())
+                            .setTitle("Uploaded data")
+                            .setMessage(mTicketList.size() + " tickets processed (" + noShows + " no shows")
+                            .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    //
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_info)
+                            .show();
                     }
 
                     @Override
                     public void onFailure(Throwable t) {
-                        Toast.makeText(view.getContext(), "Uploaded scanned ticket data", Toast.LENGTH_SHORT).show();
                         Log.d("Error", t.getMessage());
+
+                        Toast.makeText(view.getContext(), "Uploaded scanned ticket data", Toast.LENGTH_SHORT).show();
+
+                        int noShows = 0;
+                        for (ApiService.Ticket ticket : mTicketList) {
+                            if (ticket.status.equalsIgnoreCase("noShow"))
+                                noShows++;
+                        }
+
+                        new AlertDialog.Builder(view.getContext())
+                                .setTitle("Uploaded data")
+                                .setMessage(mTicketList.size() + " tickets processed (" + noShows + " no shows)")
+                                .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //
+                                    }
+                                })
+                                .setIcon(android.R.drawable.ic_dialog_info)
+                                .show();
                     }
                 });
 

@@ -19,7 +19,7 @@ import retrofit.http.Query;
 
 public final class ApiService {
 
-    public static final String API_URL = "http://192.168.1.171:3000";
+    public static final String API_URL = "http://172.30.40.219:3000";
 
     public static final ApiService.DRail service = new Retrofit.Builder()
             .baseUrl(ApiService.API_URL)
@@ -82,13 +82,15 @@ public final class ApiService {
         public final String arrivalDate;
         public final int trainId;
         public final String prevStationName;
+        public final String nextStationName;
 
-        public HydratedTrip(int id, String departureDate, String arrivalDate, int trainId, String prevStationName) {
+        public HydratedTrip(int id, String departureDate, String arrivalDate, int trainId, String prevStationName, String nextStationName) {
             this.id = id;
             this.departureDate = departureDate;
             this.arrivalDate = arrivalDate;
             this.trainId = trainId;
             this.prevStationName = prevStationName;
+            this.nextStationName = nextStationName;
         }
     }
 

@@ -46,6 +46,7 @@ public class TripsDetailsActivity extends AppCompatActivity {
         Integer previousTrainId = null;
         ApiService.HydratedTrip previousTrip = null;
         DateFormat format = new SimpleDateFormat("HH:mm:ss");
+        int currentIndex = 0;
         for (ApiService.HydratedTrip trip : trips) {
 
             toBuy.add(new ApiService.TripValidation(trip.id, trip.trainId));
@@ -66,9 +67,16 @@ public class TripsDetailsActivity extends AppCompatActivity {
                 }
             }
 
-            stk.addView(createItineraryEntry(trip));
+            if (currentIndex != trips.size() - 1) { // not last
+                stk.addView(createItineraryEntry(trip, false));
+            } else { // last, show destination
+                stk.addView(createItineraryEntry(trip, false));
+                stk.addView(createItineraryEntry(trip, true));
+            }
+
             previousTrainId = trip.trainId;
             previousTrip = trip;
+            ++currentIndex;
         }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -138,16 +146,26 @@ public class TripsDetailsActivity extends AppCompatActivity {
         return tr;
     }
 
-    private TableRow createItineraryEntry(ApiService.HydratedTrip trip) {
+    private TableRow createItineraryEntry(ApiService.HydratedTrip trip, boolean isLast) {
         TableRow tr = new TableRow(getApplicationContext());
 
         TextView stationTextView = new TextView(getApplicationContext());
-        stationTextView.setText(trip.prevStationName);
+
+        if (!isLast) {
+            stationTextView.setText(trip.prevStationName);
+        } else {
+            stationTextView.setText(trip.nextStationName);
+        }
         stationTextView.setTextColor(Color.BLACK);
 
 
         TextView passageTimeTextView = new TextView(getApplicationContext());
-        passageTimeTextView.setText(trip.departureDate);
+
+        if (!isLast) {
+            passageTimeTextView.setText(trip.departureDate);
+        } else {
+            passageTimeTextView.setText(trip.arrivalDate);
+        }
         passageTimeTextView.setTextColor(Color.BLACK);
 
 

@@ -45,6 +45,7 @@ public class TripsDetailsActivity extends AppCompatActivity {
 
         Integer previousTrainId = null;
         ApiService.HydratedTrip previousTrip = null;
+        DateFormat format = new SimpleDateFormat("HH:mm:ss");
         for (ApiService.HydratedTrip trip : trips) {
 
             toBuy.add(new ApiService.TripValidation(trip.id, trip.trainId));
@@ -52,11 +53,12 @@ public class TripsDetailsActivity extends AppCompatActivity {
             if (previousTrainId != null && !previousTrainId.equals(trip.trainId)) {
                 //stk.addView(createSeparator());
                 stk.addView(createTransferTitle());
-                DateFormat format = new SimpleDateFormat("HH:mm:ss");
                 try {
-                    Date date1 = format.parse(previousTrip.arrivalDate);
-                    Date date2 = format.parse(trip.departureDate);
-                    stk.addView(createTransferEntry(Integer.toString(trip.trainId), "00:05:00"));
+                    Date earlierDate = format.parse(previousTrip.arrivalDate);
+                    Date laterDate = format.parse(trip.departureDate);
+
+                    int minutesElapsed = (int)((laterDate.getTime()/60000) - (earlierDate.getTime()/60000));
+                    stk.addView(createTransferEntry(Integer.toString(trip.trainId), Integer.toString(minutesElapsed) + " Minutes"));
                     //stk.addView(createSeparator());
                     stk.addView(createItineraryTitle());
                 } catch (ParseException e) {

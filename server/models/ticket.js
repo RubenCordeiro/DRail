@@ -15,7 +15,7 @@ Ticket.schema = {
 Ticket.addComputedField('signature', function(ticket) {
     var sig = new jsrsasign.crypto.Signature({"alg": "SHA1withRSA"});
     sig.init(prvKeyPEM);
-    sig.updateString(ticket.id.toString() + ticket.creationDate);
+    sig.updateString(ticket.id.toString());
     return sig.sign();
 });
 

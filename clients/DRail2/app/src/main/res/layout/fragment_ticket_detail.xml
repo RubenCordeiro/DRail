@@ -1,0 +1,24 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/ticket_detail"
+        style="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:singleLine="false"
+        android:textIsSelectable="true"
+        tools:context="pt.up.fe.cmov.drail.TicketDetailFragment" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="@dimen/mr_media_route_controller_art_max_height"
+        android:layout_height="@dimen/mr_media_route_controller_art_max_height"
+        android:layout_gravity="center"
+        android:contentDescription="@string/qr_code" />
+</LinearLayout>

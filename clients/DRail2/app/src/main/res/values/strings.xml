@@ -11,4 +11,7 @@
     <string name="prompt_username">Username</string>
     <string name="prompt_name">Name</string>
     <string name="prompt_cc">Credit Card</string>
+    <string name="title_ticket_list">Tickets</string>
+    <string name="title_ticket_detail">Ticket Detail</string>
+    <string name="qr_code">QR Code</string>
 </resources>

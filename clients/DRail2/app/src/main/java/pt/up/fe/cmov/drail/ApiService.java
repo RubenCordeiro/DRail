@@ -1,5 +1,6 @@
 package pt.up.fe.cmov.drail;
 
+import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,11 +10,12 @@ import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.http.GET;
 import retrofit.http.Header;
+import retrofit.http.Path;
 import retrofit.http.Query;
 
 public final class ApiService {
 
-    public static final String API_URL = "http://192.168.1.205:3000";
+    public static final String API_URL = "http://192.168.1.171:3000";
 
     public static final ApiService.DRail service = new Retrofit.Builder()
             .baseUrl(ApiService.API_URL)
@@ -70,11 +72,38 @@ public final class ApiService {
         }
     }
 
+    public static class Ticket implements Serializable {
+        public final int id;
+        public final String creationDate;
+        public final String status;
+        public final ArrayList<Integer> trips;
+        public final String signature;
+        public final String startStation;
+        public final String endStation;
+
+        public Ticket(int id, String creationDate, String status, ArrayList<Integer> trips, String signature, String startStation, String endStation) {
+            this.id = id;
+            this.creationDate = creationDate;
+            this.status = status;
+            this.trips = trips;
+            this.signature = signature;
+            this.startStation = startStation;
+            this.endStation = endStation;
+        }
+
+        @Override public String toString() {
+            return String.format("%s to %s (%s)", startStation, endStation, creationDate.replace('T', ' ').substring(0, 19));
+        }
+    }
+
     public interface DRail {
         @GET("/api/graph")
         Call<Graph> getGraph(@Header("Bearer") String bearer);
 
         @GET("/api/trips")
-        Call<ArrayList<ArrayList<Trip>>> getTrips(@Query("from") int from, @Query("to") int to);
+        Call<ArrayList<ArrayList<Trip>>> getTrips(@Header("Bearer") String bearer, @Query("from") int from, @Query("to") int to);
+
+        @GET("api/users/{id}/tickets")
+        Call<ArrayList<Ticket>> getTickets(@Header("Bearer") String bearer, @Path("id") int userId);
     }
 }

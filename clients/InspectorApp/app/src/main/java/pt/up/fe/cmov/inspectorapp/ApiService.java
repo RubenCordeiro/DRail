@@ -59,9 +59,10 @@ public final class ApiService {
     public static class Ticket implements Serializable {
         public final int id;
         public final String creationDate;
-        public final String status;
         public final ArrayList<Integer> trips;
         public final String signature;
+
+        public String status;
 
         public Ticket(int id, String creationDate, String status, ArrayList<Integer> trips, String signature) {
             this.id = id;

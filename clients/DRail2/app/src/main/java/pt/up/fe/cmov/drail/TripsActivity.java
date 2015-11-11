@@ -22,7 +22,7 @@ public class TripsActivity extends AppCompatActivity implements TripsListFragmen
         int from = getIntent().getIntExtra("from", 0);
         int to = getIntent().getIntExtra("to", 0);
 
-        Call<ArrayList<ArrayList<ApiService.Trip>>> tripsRequest = ApiService.service.getTrips(from, to);
+        Call<ArrayList<ArrayList<ApiService.Trip>>> tripsRequest = ApiService.service.getTrips("token", from, to);
         tripsRequest.enqueue(new Callback<ArrayList<ArrayList<ApiService.Trip>>>() {
             @Override
             public void onResponse(Response<ArrayList<ArrayList<ApiService.Trip>>> response, Retrofit retrofit) {
@@ -39,7 +39,6 @@ public class TripsActivity extends AppCompatActivity implements TripsListFragmen
                             getSupportFragmentManager().findFragmentById(R.id.trips_fragment);
 
                     if (tripsFragment != null) {
-                        Log.d("TripsFragment", Integer.toString(al.size()));
                         tripsFragment.updateTripsView(al);
                     }
 

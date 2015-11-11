@@ -43,7 +43,7 @@ module.exports = {
 
                 db.query('MATCH path = (departureStation:station)-[trips:trip]->(arrivalStation:station) ' +
                     'WHERE ID(departureStation) = {departureStation} AND ID(arrivalStation) = {arrivalStation} RETURN EXTRACT(r IN relationships(path) ' +
-                    '| {id: ID(r), departureDate: r.departureDate, arrivalDate: r.arrivalDate, trainId: r.trainId, prevStationName: STARTNODE(r).name}) ' +
+                    '| {id: ID(r), departureDate: r.departureDate, arrivalDate: r.arrivalDate, trainId: r.trainId, prevStationName: STARTNODE(r).name, nextStationName: ENDNODE(r).name}) ' +
                     'ORDER BY trips.departureDate',
                     {
                         departureStation: first2Stations[0],
@@ -59,7 +59,7 @@ module.exports = {
                             db.query('MATCH path = (departureStation:station)-[trips:trip]->(arrivalStation:station) ' +
                                 'WHERE ID(departureStation) = {departureStation} AND ID(arrivalStation) = {arrivalStation} AND trips.departureDate >= {lastArrivalDate} ' +
                                 'RETURN EXTRACT(r IN relationships(path) | {id: ID(r), departureDate: r.departureDate, ' +
-                                'arrivalDate: r.arrivalDate, trainId: r.trainId, prevStationName: STARTNODE(r).name}) ' +
+                                'arrivalDate: r.arrivalDate, trainId: r.trainId, prevStationName: STARTNODE(r).name, nextStationName: ENDNODE(r).name}) ' +
                                 'ORDER BY trips.departureDate LIMIT 1',
                                 {
                                     departureStation: lastElem.prevStation.id,

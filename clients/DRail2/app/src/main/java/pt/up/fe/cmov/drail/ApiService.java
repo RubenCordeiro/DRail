@@ -167,6 +167,24 @@ public final class ApiService {
         }
     }
 
+    public static class TripValidation {
+        public final int id;
+        public final int trainId;
+
+        public TripValidation(int id, int trainId) {
+            this.id = id;
+            this.trainId = trainId;
+        }
+    }
+
+    public static class TripsValidation {
+        public final ArrayList<TripValidation> trips;
+
+        public TripsValidation(ArrayList<TripValidation> trips) {
+            this.trips = trips;
+        }
+    }
+
     public interface DRail {
         @GET("/api/graph")
         Call<Graph> getGraph(@Header("Bearer") String bearer);
@@ -185,5 +203,9 @@ public final class ApiService {
 
         @POST("api/login")
         Call<LoginUserResponse> login(@Body LoginUserRequest user);
+
+        @POST("/api/users/{id}/tickets")
+        Call<String> buyTickets(@Header("Bearer") String bearer, @Path("id") int userId,
+                                     @Body TripsValidation validation);
     }
 }

@@ -8,6 +8,33 @@ module.exports = function(server) {
 
     server.route({
         method: 'GET',
+        path: '/api/trips/hydrated',
+        config: {
+            auth: false,
+            validate: {
+                query: {
+                    from: Joi.number().integer().required(),
+                    to: Joi.number().integer().required()
+                }
+            },
+            tags: ['api']
+        },
+        handler: (request, reply) => {
+
+            Trip.findAndHydrate(request.query.from, request.query.to, (err, results) => {
+                if (err) {
+                    server.log(['error'], err);
+                    return reply(Boom.badImplementation('Internal server error'));
+                }
+
+                return reply(results);
+            });
+
+        }
+    });
+
+    server.route({
+        method: 'GET',
         path: '/api/trips',
         config: {
             auth: false,
@@ -15,14 +42,14 @@ module.exports = function(server) {
                 query: {
                     from: Joi.number().integer().required(),
                     to: Joi.number().integer().required(),
-                    hydrateStations: Joi.boolean()
+                    hydrate: Joi.boolean()
                 }
             },
             tags: ['api']
         },
         handler: (request, reply) => {
 
-            if (request.query.hydrateStations) {
+            if (request.query.hydrate) {
                 Trip.findAndHydrate(request.query.from, request.query.to, (err, results) => {
                     if (err) {
                         server.log(['error'], err);

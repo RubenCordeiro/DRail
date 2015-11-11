@@ -86,6 +86,15 @@ public class TicketListFragment extends ListFragment {
                 if (response.isSuccess()) {
                     mTicketList = response.body();
 
+                    ArrayList<ApiService.Ticket> toRemove = new ArrayList<ApiService.Ticket>();
+                    for (ApiService.Ticket t : mTicketList) {
+                        if (!t.status.equalsIgnoreCase("pending")) {
+                            toRemove.add(t);
+                        }
+                    }
+
+                    mTicketList.removeAll(toRemove);
+
                     setListAdapter(new ArrayAdapter<>(
                             getActivity(),
                             android.R.layout.simple_list_item_1,

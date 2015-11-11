@@ -2,6 +2,10 @@ package pt.up.fe.cmov.drail;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcEvent;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,8 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.glxn.qrgen.android.QRCode;
+
+import java.nio.charset.Charset;
 
 import pt.up.fe.cmov.drail.dummy.DummyContent;
 
@@ -22,7 +29,8 @@ import pt.up.fe.cmov.drail.dummy.DummyContent;
  * in two-pane mode (on tablets) or a {@link TicketDetailActivity}
  * on handsets.
  */
-public class TicketDetailFragment extends Fragment {
+public class TicketDetailFragment extends Fragment
+        implements NfcAdapter.OnNdefPushCompleteCallback {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -56,7 +64,33 @@ public class TicketDetailFragment extends Fragment {
             if (appBarLayout != null) {
                 appBarLayout.setTitle("Ticket #" + mItem.id);
             }
+
+            NfcAdapter mNfcAdapter;
+            String tag;
+            byte[] message;
+
+            // Check for available NFC Adapter
+            mNfcAdapter = NfcAdapter.getDefaultAdapter(getContext());
+            if (mNfcAdapter == null) {
+                Toast.makeText(getContext(), "NFC is not available on this device.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            NdefMessage msg = new NdefMessage(new NdefRecord[] {
+                createMimeRecord("application/pt.up.fe.cmov.type1",
+                Integer.toString(mItem.id).getBytes())
+            });
+
+            // Register a NDEF message to be sent in a beam operation (P2P)
+            mNfcAdapter.setNdefPushMessage(msg, getActivity());
+            mNfcAdapter.setOnNdefPushCompleteCallback(this, getActivity());
         }
+    }
+
+    public NdefRecord createMimeRecord(String mimeType, byte[] payload) {
+        byte[] mimeBytes = mimeType.getBytes(Charset.forName("ISO-8859-1"));
+        return new NdefRecord(
+                NdefRecord.TNF_MIME_MEDIA, mimeBytes, new byte[0], payload);
     }
 
     @Override
@@ -78,5 +112,14 @@ public class TicketDetailFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onNdefPushComplete(NfcEvent event) {
+        getActivity().runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(getActivity(), "Message sent.", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

@@ -23,4 +23,6 @@
     <string name="title_test_list">Tests</string>
     <string name="title_test_detail">Test Detail</string>
     <string name="title_activity_tickets">Tickets</string>
+    <string name="title_activity_nfc_receive">NFC Validation</string>
+    <string name="nfc_receive_msg">Receiving ...</string>
 </resources>

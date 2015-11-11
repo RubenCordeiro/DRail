@@ -2,11 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pt.up.fe.cmov.inspectorapp" >
 
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:name="android.hardware.nfc" android:required="true"/>
+    <uses-permission android:name="android.permission.NFC"/>
 
     <application
         android:allowBackup="true"
@@ -40,6 +41,20 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="pt.up.fe.cmov.inspectorapp.MainActivity" />
+        </activity>
+        <activity
+            android:name=".NfcReceive"
+            android:label="@string/title_activity_nfc_receive"
+            android:launchMode="singleTop"
+            android:parentActivityName=".TicketsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="pt.up.fe.cmov.inspectorapp.TicketsActivity" />
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="application/pt.up.fe.cmov.type1" />
+            </intent-filter>
         </activity>
     </application>
 

@@ -50,7 +50,7 @@ import retrofit.Retrofit;
 public class TicketsActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    static public RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
     private static String string(ByteBuffer buf)
@@ -136,7 +136,7 @@ public class TicketsActivity extends AppCompatActivity {
         }
     }
 
-    ArrayList<ApiService.Ticket> mTicketList = new ArrayList<>();
+    static ArrayList<ApiService.Ticket> mTicketList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

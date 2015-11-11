@@ -5,9 +5,9 @@
     tools:context="pt.up.fe.cmov.drail.TripsActivity">
 
     <fragment
-        android:id="@+id/tripsList"
+        android:id="@+id/trips_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="pt.up.fe.cmov.drail.TripListFragment" />
+        android:name="pt.up.fe.cmov.drail.TripsListFragment" />
 
 </RelativeLayout>

@@ -22,16 +22,16 @@ public class TripsActivity extends AppCompatActivity implements TripsListFragmen
         int from = getIntent().getIntExtra("from", 0);
         int to = getIntent().getIntExtra("to", 0);
 
-        Call<ArrayList<ArrayList<ApiService.Trip>>> tripsRequest = ApiService.service.getTrips("token", from, to);
-        tripsRequest.enqueue(new Callback<ArrayList<ArrayList<ApiService.Trip>>>() {
+        Call<ArrayList<ArrayList<ApiService.HydratedTrip>>> tripsRequest = ApiService.service.getHydratedTrips("token", from, to);
+        tripsRequest.enqueue(new Callback<ArrayList<ArrayList<ApiService.HydratedTrip>>>() {
             @Override
-            public void onResponse(Response<ArrayList<ArrayList<ApiService.Trip>>> response, Retrofit retrofit) {
+            public void onResponse(Response<ArrayList<ArrayList<ApiService.HydratedTrip>>> response, Retrofit retrofit) {
                 if (response.isSuccess()) { // successful request, build graph
 
-                    ArrayList<ArrayList<ApiService.Trip>> tripsList = response.body();
+                    ArrayList<ArrayList<ApiService.HydratedTrip>> tripsList = response.body();
 
-                    ArrayList<ArrayList<ApiService.Trip>> al = new ArrayList<>(tripsList.size());
-                    for (ArrayList<ApiService.Trip> trips : tripsList) {
+                    ArrayList<ArrayList<ApiService.HydratedTrip>> al = new ArrayList<>(tripsList.size());
+                    for (ArrayList<ApiService.HydratedTrip> trips : tripsList) {
                         al.add(trips);
                     }
 

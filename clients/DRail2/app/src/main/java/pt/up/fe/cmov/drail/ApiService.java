@@ -74,6 +74,22 @@ public final class ApiService {
         }
     }
 
+    public static class HydratedTrip implements Serializable {
+        public final int id;
+        public final String departureDate;
+        public final String arrivalDate;
+        public final int trainId;
+        public final String prevStationName;
+
+        public HydratedTrip(int id, String departureDate, String arrivalDate, int trainId, String prevStationName) {
+            this.id = id;
+            this.departureDate = departureDate;
+            this.arrivalDate = arrivalDate;
+            this.trainId = trainId;
+            this.prevStationName = prevStationName;
+        }
+    }
+
     public static class Ticket implements Serializable {
         public final int id;
         public final String creationDate;
@@ -104,6 +120,9 @@ public final class ApiService {
 
         @GET("/api/trips")
         Call<ArrayList<ArrayList<Trip>>> getTrips(@Header("Bearer") String bearer, @Query("from") int from, @Query("to") int to);
+
+        @GET("/api/trips/hydrated")
+        Call<ArrayList<ArrayList<HydratedTrip>>> getHydratedTrips(@Header("Bearer") String bearer, @Query("from") int from, @Query("to") int to);
 
         @GET("api/users/{id}/tickets")
         Call<ArrayList<Ticket>> getTickets(@Header("Bearer") String bearer, @Path("id") int userId);

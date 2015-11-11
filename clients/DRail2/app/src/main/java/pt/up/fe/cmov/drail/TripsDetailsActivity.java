@@ -26,12 +26,12 @@ public class TripsDetailsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ArrayList<ApiService.Trip> trips = (ArrayList<ApiService.Trip>) getIntent().getSerializableExtra("trips");
+        ArrayList<ApiService.HydratedTrip> trips = (ArrayList<ApiService.HydratedTrip>) getIntent().getSerializableExtra("trips");
         TableLayout stk = (TableLayout) findViewById(R.id.table_main);
         stk.addView(createItineraryTitle());
 
         Integer previousTrainId = null;
-        for (ApiService.Trip trip : trips) {
+        for (ApiService.HydratedTrip trip : trips) {
 
             if (previousTrainId != null && !previousTrainId.equals(trip.trainId)) {
                 //stk.addView(createSeparator());
@@ -91,11 +91,11 @@ public class TripsDetailsActivity extends AppCompatActivity {
         return tr;
     }
 
-    private TableRow createItineraryEntry(ApiService.Trip trip) {
+    private TableRow createItineraryEntry(ApiService.HydratedTrip trip) {
         TableRow tr = new TableRow(getApplicationContext());
 
         TextView stationTextView = new TextView(getApplicationContext());
-        stationTextView.setText(Integer.toString(trip.id));
+        stationTextView.setText(trip.prevStationName);
         stationTextView.setTextColor(Color.BLACK);
 
 

@@ -36,7 +36,7 @@ public class TripsListFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
 
-    public ArrayList<ArrayList<ApiService.Trip>> trips = null;
+    public ArrayList<ArrayList<ApiService.HydratedTrip>> trips = null;
 
 
     /**
@@ -100,11 +100,11 @@ public class TripsListFragment extends Fragment {
         mListener = null;
     }
 
-    public void updateTripsView(ArrayList<ArrayList<ApiService.Trip>> al) {
+    public void updateTripsView(ArrayList<ArrayList<ApiService.HydratedTrip>> al) {
         trips = al;
         ArrayList<TripsItem> items = new ArrayList<>(al.size());
 
-        for (ArrayList<ApiService.Trip> l : al) {
+        for (ArrayList<ApiService.HydratedTrip> l : al) {
 
             TripsItem item = new TripsItem(l.get(0).departureDate, l.get(l.size() - 1).arrivalDate);
             items.add(item);

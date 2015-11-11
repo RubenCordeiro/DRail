@@ -72,7 +72,8 @@ public class TripsListFragment extends Fragment {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 if (trips != null) {
-                    Intent intent = new Intent(view.getContext(), TripsActivity.class);
+                    Intent intent = new Intent(view.getContext(), TripsDetailsActivity.class);
+                    intent.putExtra("trips", trips.get(position));
                     //intent.putExtra(EXTRA_TOKEN, trips.get(position));
                     startActivity(intent);
                 }

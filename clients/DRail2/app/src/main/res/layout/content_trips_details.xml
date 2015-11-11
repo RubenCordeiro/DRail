@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="end"
+    android:shrinkColumns="*"
+    android:stretchColumns="*">
+
+    <TableRow>
+        <TextView
+            android:text="Station" />
+        <TextView
+            android:layout_column="1"
+            android:text="Passage Time"
+            android:padding="3dip" />
+        <TextView
+            android:text="Train"
+            android:gravity="right"
+            android:padding="3dip" />
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:text="A" />
+        <TextView
+            android:layout_column="1"
+            android:text="LEL"
+            android:padding="3dip" />
+        <TextView
+            android:text="T02"
+            android:gravity="right"
+            android:padding="3dip" />
+    </TableRow>
+
+    <View
+        android:layout_height="2dip"
+        android:background="#FF909090" />
+
+    <TableRow>
+        <TextView
+            android:text="Transfer"
+            />
+
+        <TextView
+            android:text="TargetTrain"
+            android:padding="3dip" />
+
+        <TextView
+            android:text="Waiting time"
+            android:gravity="right"
+            android:padding="3dip"
+            />
+    </TableRow>
+
+    <TableRow>
+        <TextView
+            android:text=""
+            />
+
+        <TextView
+            android:text="T01"
+            android:padding="3dip" />
+
+        <TextView
+            android:text="00:30:20"
+            android:gravity="right"
+            android:padding="3dip"
+            />
+    </TableRow>
+
+    <View
+        android:layout_height="2dip"
+        android:background="#FF909090" />
+
+    <TableRow>
+        <TextView
+            android:layout_column="1"
+            android:text="Quit"
+            android:padding="3dip" />
+    </TableRow>
+</TableLayout>

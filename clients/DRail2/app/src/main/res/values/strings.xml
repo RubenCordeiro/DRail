@@ -14,4 +14,5 @@
     <string name="title_ticket_list">Tickets</string>
     <string name="title_ticket_detail">Ticket Detail</string>
     <string name="qr_code">QR Code</string>
+    <string name="title_activity_trips_details">TripsDetailsActivity</string>
 </resources>

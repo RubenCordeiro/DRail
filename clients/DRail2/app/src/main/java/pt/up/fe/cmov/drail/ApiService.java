@@ -1,5 +1,7 @@
 package pt.up.fe.cmov.drail;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -58,7 +60,7 @@ public final class ApiService {
         }
     }
 
-    public static class Trip {
+    public static class Trip implements Serializable {
         public final int id;
         public final String departureDate;
         public final String arrivalDate;

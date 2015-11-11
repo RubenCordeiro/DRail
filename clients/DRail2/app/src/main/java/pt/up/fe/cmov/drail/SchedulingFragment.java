@@ -119,6 +119,11 @@ public class SchedulingFragment extends Fragment implements GoogleMap.OnMyLocati
         actionQr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                if (firstClickedStation == null || secondClickedStation == null) {
+                    return;
+                }
+
                 Intent intent = new Intent(view.getContext(), TripsActivity.class);
                 intent.putExtra("from", SchedulingFragment.this.firstClickedStation.id);
                 intent.putExtra("to", SchedulingFragment.this.secondClickedStation.id);

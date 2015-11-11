@@ -8,6 +8,8 @@ const Async = require('async'),
 const User = require('../models/user'),
     Ticket = require('../models/ticket');
 
+const db = require('seraph')(require('config').get('database'));
+
 module.exports = (server) => {
 
     server.route({
@@ -69,26 +71,16 @@ module.exports = (server) => {
             Lazy(request.payload.tickets)
                 .async()
                 .each(ticket => {
-                    Ticket.read(ticket.id, (err, ticketInstance) => {
-
-                        if (err) {
-                            throw err;
-                        }
-
-                        if (!ticketInstance) {
-                            server.log(['error', 'ticket_validation'],
-                                { message: 'Ticket with ID: ' + ticket.id + ' was not found in the database'});
-
-                        } else {
-                            ticketInstance.status = ticket.status;
-                            Ticket.save(ticketInstance, (err) => {
-                                if (err) {
-                                    throw err;
-                                }
-                            });
-                        }
-
-                    });
+                    ticket.id = parseInt(ticket.id, 10);
+                    db.query("MATCH (n:`ticket`) WHERE ID(n) = {id} SET n.status = {status} RETURN n",
+                        ticket, (err, results) => {
+                            if (err) {
+                                console.log("Error:", err);
+                                throw err;
+                            }
+                            
+                            console.log(results);
+                        });
                 })
                 .onComplete(() => {
                     return reply('The tickets were successfully updated');

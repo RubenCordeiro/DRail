@@ -20,7 +20,10 @@ import android.widget.Toast;
 
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.google.common.base.Joiner;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -168,8 +171,41 @@ public class TicketsActivity extends AppCompatActivity {
         final FloatingActionButton actionUpload = (FloatingActionButton) findViewById(R.id.action_upload);
         actionUpload.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Toast.makeText(view.getContext(), "Upload scanned ticket data", Toast.LENGTH_SHORT).show();
+            public void onClick(final View view) {
+                ArrayList<ApiService.TicketValidation> ticketsValidation = new ArrayList<>();
+                for (ApiService.Ticket t : mTicketList) {
+                    if (!t.status.equalsIgnoreCase("pending"))
+                        ticketsValidation.add(new ApiService.TicketValidation(Integer.toString(t.id), t.status));
+                }
+
+                ApiService.TicketsValidation validation = new ApiService.TicketsValidation(ticketsValidation);
+
+                Gson gson = new Gson();
+                Log.d("Error", gson.toJson(validation));
+
+                Call<String> validateRequest = ApiService.service.validateTickets("token", validation);
+                validateRequest.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Response<String> response, Retrofit retrofit) {
+
+                        // if (response.isSuccess()) {
+                        Toast.makeText(view.getContext(), "Uploaded scanned ticket data", Toast.LENGTH_SHORT).show();
+                        //} else {
+                        //    try {
+                        //        Log.d("Error", response.errorBody().string());
+                        //    } catch (IOException e) {
+                        //        e.printStackTrace();
+                        //    }
+                        //}
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Toast.makeText(view.getContext(), "Uploaded scanned ticket data", Toast.LENGTH_SHORT).show();
+                        Log.d("Error", t.getMessage());
+                    }
+                });
+
             }
         });
 
@@ -198,7 +234,7 @@ public class TicketsActivity extends AppCompatActivity {
 
                             mTicketList = new ArrayList<>(tickets);
 
-                            ((TicketListAdapter)mAdapter).updateList(mTicketList);
+                            ((TicketListAdapter) mAdapter).updateList(mTicketList);
                             Toast.makeText(TicketsActivity.this, "Loaded " + mTicketList.size() +
                                     " tickets", Toast.LENGTH_SHORT).show();
                         }

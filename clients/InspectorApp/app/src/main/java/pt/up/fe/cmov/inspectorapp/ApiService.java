@@ -7,8 +7,10 @@ import java.util.List;
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
+import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.Header;
+import retrofit.http.POST;
 import retrofit.http.Query;
 
 public final class ApiService {
@@ -73,6 +75,24 @@ public final class ApiService {
         }
     }
 
+    public static class TicketsValidation implements Serializable {
+        public final ArrayList<TicketValidation> tickets;
+
+        public TicketsValidation(ArrayList<TicketValidation> tickets) {
+            this.tickets = tickets;
+        }
+    }
+
+    public static class TicketValidation implements Serializable {
+        public final String id;
+        public final String status;
+
+        public TicketValidation(String id, String status) {
+            this.id = id;
+            this.status = status;
+        }
+    }
+
     public interface DRail {
         @GET("/api/stations")
         Call<List<Station>> listStations(@Header("Bearer") String bearer);
@@ -85,5 +105,9 @@ public final class ApiService {
         @GET("/api/tickets")
         Call<List<Ticket>> listTickets(@Header("Bearer") String bearer,
                                        @Query("trips") ArrayList<Integer> trips);
+
+        @POST("/api/tickets/validate")
+        Call<String> validateTickets(@Header("Bearer") String bearer,
+                                     @Body TicketsValidation validation);
     }
 }

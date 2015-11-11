@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,6 +31,16 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+
+import com.google.gson.Gson;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity implements SchedulingFragment.OnFragmentInteractionListener,
         LoginFragment.OnFragmentInteractionListener, TicketListFragment.Callbacks {
@@ -80,7 +91,51 @@ public class MainActivity extends AppCompatActivity implements SchedulingFragmen
             }
         }
 
+        try {
+            FileInputStream in = openFileInput("userdata");
+            if (in.available() == 0)
+                return;
 
+            InputStreamReader inputStreamReader = new InputStreamReader(in);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String userInfo = bufferedReader.readLine();
+
+            Gson gson = new Gson();
+            mLoginUser = gson.fromJson(userInfo, ApiService.LoginUserResponse.class);
+
+            Log.d("Error", "loaded data!! " + mLoginUser.id);
+        } catch (FileNotFoundException e) {
+            // do nothing
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        if (mLoginUser != null) {
+            FileOutputStream out = null;
+            try {
+                out = openFileOutput("userdata", Context.MODE_PRIVATE);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(out);
+
+            Gson gson = new Gson();
+
+            try {
+                outputStreamWriter.write(gson.toJson(mLoginUser));
+                Log.d("Error", "saved data!!");
+                outputStreamWriter.close();
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

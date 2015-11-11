@@ -128,6 +128,9 @@ public class MainActivity extends AppCompatActivity implements TripsFragment.OnF
             @Override
             public void onClick(View view) {
 
+                if (selectedArrivalStation == null || selectedDepartureStation == null)
+                    return;
+
                 Call<List<List<ApiService.Trip>>> tripsRequest = ApiService.service.listTrips("token",
                         stationIds.get(selectedDepartureStation), stationIds.get(selectedArrivalStation));
                 tripsRequest.enqueue(new Callback<List<List<ApiService.Trip>>>() {

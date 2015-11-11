@@ -1,12 +1,14 @@
 package pt.up.fe.cmov.drail;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +17,20 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 public class TripsDetailsActivity extends AppCompatActivity {
+
+    private ArrayList<ApiService.TripValidation> toBuy = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,24 +44,56 @@ public class TripsDetailsActivity extends AppCompatActivity {
         stk.addView(createItineraryTitle());
 
         Integer previousTrainId = null;
+        ApiService.HydratedTrip previousTrip = null;
         for (ApiService.HydratedTrip trip : trips) {
+
+            toBuy.add(new ApiService.TripValidation(trip.id, trip.trainId));
 
             if (previousTrainId != null && !previousTrainId.equals(trip.trainId)) {
                 //stk.addView(createSeparator());
                 stk.addView(createTransferTitle());
-                stk.addView(createTransferEntry(Integer.toString(trip.trainId), "00:05:00"));
-                //stk.addView(createSeparator());
-                stk.addView(createItineraryTitle());
+                DateFormat format = new SimpleDateFormat("HH:mm:ss");
+                try {
+                    Date date1 = format.parse(previousTrip.arrivalDate);
+                    Date date2 = format.parse(trip.departureDate);
+                    stk.addView(createTransferEntry(Integer.toString(trip.trainId), "00:05:00"));
+                    //stk.addView(createSeparator());
+                    stk.addView(createItineraryTitle());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
 
             stk.addView(createItineraryEntry(trip));
             previousTrainId = trip.trainId;
+            previousTrip = trip;
         }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Call<String> tripsRequest = ApiService.service.buyTickets(MainActivity.mLoginUser.token,
+                        MainActivity.mLoginUser.id,
+                        new ApiService.TripsValidation(toBuy));
+                tripsRequest.enqueue(new Callback<String>() {
+                    @Override
+                    public void onResponse(Response<String> response, Retrofit retrofit) {
+                        if (response.isSuccess()) { // successful request, build graph
+                            finish();
+                        } else {
+                            Log.d("ResponseError", response.raw().request().urlString());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Log.d("Error", t.getMessage());
+                        finish();
+                    }
+                });
+
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }

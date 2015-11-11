@@ -46,7 +46,9 @@
         <activity
             android:name=".TripsDetailsActivity"
             android:label="@string/title_activity_trips_details"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTop"
+            >
         </activity>
 
         <activity

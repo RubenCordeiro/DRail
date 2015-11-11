@@ -161,13 +161,12 @@ public class SchedulingFragment extends Fragment implements GoogleMap.OnMyLocati
                         Location stationLocation = new Location("none");
                         stationLocation.setLongitude(s.longitude);
                         stationLocation.setLatitude(s.latitude);
-                        if (currentUserLocation != null && currentUserLocation.distanceTo(stationLocation) <= 100) {
+                        if (s.name.equals("Central")) {
                             Log.d("Location", "Camera set");
                             CameraPosition cameraPosition = new CameraPosition.Builder()
                                     .target(new LatLng(s.latitude, s.longitude))
                                     .zoom(15)
                                     .bearing(0)
-                                    .tilt(45)
                                     .build();
 
                             map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));

@@ -20,6 +20,90 @@ module.exports = {
         });
     },
 
+    findAndHydrate: (departureStationId, arrivalStationId, callback) => {
+
+        db.query('START startNode=Node({departureStationId}), endNode=Node({arrivalStationId}) ' +
+            'MATCH path=shortestPath(startNode-[trips:trip*]-endNode) ' +
+            'RETURN EXTRACT(n in NODES(path) | {id: ID(n), name: n.name }) as stations',
+            {
+                departureStationId: departureStationId,
+                arrivalStationId: arrivalStationId
+            },
+            (err, results) => {
+                if (err) {
+                    return callback(err, null);
+                }
+
+                var stations = Lazy(results[0]).pluck('id').toArray();
+                if (stations.length < 2) {
+                    return callback(null, []);
+                }
+
+                var first2Stations = Lazy(stations).first(2).toArray();
+
+                db.query('MATCH path = (departureStation:station)-[trips:trip]->(arrivalStation:station) ' +
+                    'WHERE ID(departureStation) = {departureStation} AND ID(arrivalStation) = {arrivalStation} RETURN EXTRACT(r IN relationships(path) ' +
+                    '| {id: ID(r), departureDate: r.departureDate, arrivalDate: r.arrivalDate, trainId: r.trainId, prevStationName: STARTNODE(r).name}) ' +
+                    'ORDER BY trips.departureDate',
+                    {
+                        departureStation: first2Stations[0],
+                        arrivalStation: first2Stations[1]
+                    },
+                    (err, results) => {
+                        if (err) {
+                            return callback(err, null);
+                        }
+
+                        results = Lazy(results).map((result) => result[0]).toArray();
+                        var reducer = (lastElem, currentStation, callback) => {
+                            db.query('MATCH path = (departureStation:station)-[trips:trip]->(arrivalStation:station) ' +
+                                'WHERE ID(departureStation) = {departureStation} AND ID(arrivalStation) = {arrivalStation} AND trips.departureDate >= {lastArrivalDate} ' +
+                                'RETURN EXTRACT(r IN relationships(path) | {id: ID(r), departureDate: r.departureDate, ' +
+                                'arrivalDate: r.arrivalDate, trainId: r.trainId, prevStationName: STARTNODE(r).name}) ' +
+                                'ORDER BY trips.departureDate LIMIT 1',
+                                {
+                                    departureStation: lastElem.prevStation.id,
+                                    arrivalStation: currentStation,
+                                    lastArrivalDate: lastElem.prevStation.arrivalDate
+                                },
+                                (err, results) => {
+                                    if (err) {
+                                        console.log("Err:", err);
+                                        return callback(err, null);
+                                    }
+
+                                    if (results.length == 0) {
+                                        return callback('Invalid trip', null);
+                                    }
+
+                                    return callback(null, {prevStation: {id: currentStation, arrivalDate: results[0][0].arrivalDate}, trips: lastElem.trips.concat(results[0][0])});
+                                });
+                        };
+
+                        var nextStations = Lazy(stations).skip(2).toArray();
+                        stations = Lazy(stations).toArray();
+                        var ret = [[]];
+                        Async.forEachOf(results, (result, index, callback) => {
+                                Async.reduce(nextStations,  {trips: [], prevStation: { id: stations[1], arrivalDate: results[index].arrivalDate } }, reducer,
+                                    (err, path) => {
+                                        if (!err) {
+                                            path.trips.unshift(results[index]);
+                                            ret[index] = path.trips;
+                                            callback(null);
+                                        }
+                                    });
+                            },
+                            (err) => {
+                                if (err) {
+                                    return callback(err, null);
+                                }
+
+                                return callback(null, ret);
+                            });
+                    });
+            });
+    },
+
     find: (departureStationId, arrivalStationId, callback) => {
 
         db.query('START startNode=Node({departureStationId}), endNode=Node({arrivalStationId}) ' +

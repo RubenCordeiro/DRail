@@ -14,20 +14,33 @@ module.exports = function(server) {
             validate: {
                 query: {
                     from: Joi.number().integer().required(),
-                    to: Joi.number().integer().required()
+                    to: Joi.number().integer().required(),
+                    hydrateStations: Joi.boolean()
                 }
             },
             tags: ['api']
         },
         handler: (request, reply) => {
-            Trip.find(request.query.from, request.query.to, (err, results) => {
-                if (err) {
-                    server.log(['error'], err);
-                    return reply(Boom.badImplementation('Internal server error'));
-                }
 
-                return reply(results);
-            });
+            if (request.query.hydrateStations) {
+                Trip.findAndHydrate(request.query.from, request.query.to, (err, results) => {
+                    if (err) {
+                        server.log(['error'], err);
+                        return reply(Boom.badImplementation('Internal server error'));
+                    }
+
+                    return reply(results);
+                });
+            } else {
+                Trip.find(request.query.from, request.query.to, (err, results) => {
+                    if (err) {
+                        server.log(['error'], err);
+                        return reply(Boom.badImplementation('Internal server error'));
+                    }
+
+                    return reply(results);
+                });
+            }
         }
     });
 

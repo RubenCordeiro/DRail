@@ -176,7 +176,7 @@ module.exports = function (server) {
         method: 'GET',
         path: '/api/users/{id}/tickets',
         config: {
-            auth: 'jwt',
+            auth: false,
             validate: {
                 params: {
                     id: Joi.number().integer().required()
@@ -209,7 +209,8 @@ module.exports = function (server) {
                     userId: Joi.number().integer().required(),
                     ticketId: Joi.number().integer().required()
                 }
-            }
+            },
+            tags: ['api']
         },
         handler: (request, reply) => {
             User.read(request.params.userId, (err, user) => {

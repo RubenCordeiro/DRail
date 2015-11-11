@@ -181,7 +181,8 @@ module.exports = function (server) {
                 params: {
                     id: Joi.number().integer().required()
                 }
-            }
+            },
+            tags: ['api']
         },
         handler: (request, reply) => {
             User.read(request.params.id, (err, user) => {

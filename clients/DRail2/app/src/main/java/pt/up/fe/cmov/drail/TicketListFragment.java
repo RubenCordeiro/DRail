@@ -10,9 +10,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
-import pt.up.fe.cmov.drail.dummy.DummyContent;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;

@@ -21,8 +21,6 @@ import net.glxn.qrgen.android.QRCode;
 
 import java.nio.charset.Charset;
 
-import pt.up.fe.cmov.drail.dummy.DummyContent;
-
 /**
  * A fragment representing a single Ticket detail screen.
  * This fragment is either contained in a {@link TicketListActivity}

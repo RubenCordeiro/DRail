@@ -133,12 +133,13 @@ public final class ApiService {
         public final String role;
         public final ArrayList<CreditCard> creditCards;
 
-        public RegisterUserRequest(String name, String username, String password, ArrayList<CreditCard> creditCards) {
+        public RegisterUserRequest(String name, String username, String password, String cc) {
             this.name = name;
             this.username = username;
             this.password = password;
             this.role = "passenger";
-            this.creditCards = creditCards;
+            this.creditCards = new ArrayList<>();
+            creditCards.add(new CreditCard(cc));
         }
     }
 

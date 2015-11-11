@@ -122,6 +122,52 @@ public class LoginFragment extends Fragment {
         mCcRegisterTextView = (TextView) v.findViewById(R.id.register_cc);
         mRegisterButton = (Button) v.findViewById(R.id.register_button);
 
+        mRegisterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CharSequence name = mNameRegisterTextView.getText();
+                CharSequence username = mUsernameRegisterTextView.getText();
+                CharSequence password = mPasswordRegisterTextView.getText();
+                CharSequence cc = mCcRegisterTextView.getText();
+
+                if (name == null || username == null || password == null || cc == null)
+                    return;
+
+                if (name.length() == 0 || username.length() == 0 || password.length() == 0 || cc.length() == 0)
+                    return;
+
+                Call<ApiService.LoginUserResponse> registerRequest = ApiService.service.register(
+                        new ApiService.RegisterUserRequest(
+                                name.toString(),
+                                username.toString(),
+                                password.toString(),
+                                cc.toString())
+                );
+
+                registerRequest.enqueue(new Callback<ApiService.LoginUserResponse>() {
+                    @Override
+                    public void onResponse(Response<ApiService.LoginUserResponse> response, Retrofit retrofit) {
+                        if (response.isSuccess()) {
+                            MainActivity.mLoginUser = response.body();
+                            Toast.makeText(getContext(), "Registered user #" + MainActivity.mLoginUser.id, Toast.LENGTH_SHORT).show();
+                            MainActivity.mViewPager.setCurrentItem(0);
+                        } else {
+                            try {
+                                Toast.makeText(getContext(), "Register error: " + response.errorBody().string(), Toast.LENGTH_SHORT).show();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Throwable t) {
+                        Toast.makeText(getContext(), "Register error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
         return v;
     }
 

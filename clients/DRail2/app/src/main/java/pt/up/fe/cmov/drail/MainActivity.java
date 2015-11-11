@@ -42,16 +42,18 @@ public class MainActivity extends AppCompatActivity implements SchedulingFragmen
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    public static SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
      * The {@link ViewPager} that will host the section contents.
      */
-    private ViewPager mViewPager;
+    public static ViewPager mViewPager;
 
     // private String tabTitles[] = new String[] { "TIMETABLE", "TICKETS", "ACCOUNT" };
     private int[] imageResId = { R.drawable.ic_timetable,
             R.drawable.ic_ticket, R.drawable.ic_account };
+
+    public static ApiService.LoginUserResponse mLoginUser = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +79,8 @@ public class MainActivity extends AppCompatActivity implements SchedulingFragmen
                 tab.setIcon(imageResId[i]);
             }
         }
+
+
     }
 
     @Override

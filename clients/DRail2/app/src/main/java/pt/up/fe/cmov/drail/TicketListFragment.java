@@ -76,48 +76,65 @@ public class TicketListFragment extends ListFragment {
     public static ArrayList<ApiService.Ticket> mTicketList = new ArrayList<>();
 
     @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        // Make sure that we are currently visible
+        if (this.isVisible()) {
+            loadTickets();
+        }
+    }
+
+    public void loadTickets() {
+        if (MainActivity.mLoginUser != null) {
+            Call<ArrayList<ApiService.Ticket>> ticketsRequest = ApiService.service.getTickets(MainActivity.mLoginUser.token, MainActivity.mLoginUser.id);
+            ticketsRequest.enqueue(new Callback<ArrayList<ApiService.Ticket>>() {
+                @Override
+                public void onResponse(Response<ArrayList<ApiService.Ticket>> response, Retrofit retrofit) {
+                    if (response.isSuccess()) {
+                        mTicketList = response.body();
+
+                        ArrayList<ApiService.Ticket> toRemove = new ArrayList<ApiService.Ticket>();
+                        for (ApiService.Ticket t : mTicketList) {
+                            if (!t.status.equalsIgnoreCase("pending")) {
+                                toRemove.add(t);
+                            }
+                        }
+
+                        mTicketList.removeAll(toRemove);
+
+                        setListAdapter(new ArrayAdapter<>(
+                                getActivity(),
+                                android.R.layout.simple_list_item_1,
+                                android.R.id.text1,
+                                mTicketList));
+
+                        Toast.makeText(getActivity(), "Loaded " + mTicketList.size() +
+                                " tickets", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.d("Error", response.raw().request().urlString());
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    Log.d("Error", t.getMessage());
+                }
+            });
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        Call<ArrayList<ApiService.Ticket>> ticketsRequest = ApiService.service.getTickets("token", 10 /* FIXME */);
-        ticketsRequest.enqueue(new Callback<ArrayList<ApiService.Ticket>>() {
-            @Override
-            public void onResponse(Response<ArrayList<ApiService.Ticket>> response, Retrofit retrofit) {
-                if (response.isSuccess()) {
-                    mTicketList = response.body();
-
-                    ArrayList<ApiService.Ticket> toRemove = new ArrayList<ApiService.Ticket>();
-                    for (ApiService.Ticket t : mTicketList) {
-                        if (!t.status.equalsIgnoreCase("pending")) {
-                            toRemove.add(t);
-                        }
-                    }
-
-                    mTicketList.removeAll(toRemove);
-
-                    setListAdapter(new ArrayAdapter<>(
-                            getActivity(),
-                            android.R.layout.simple_list_item_1,
-                            android.R.id.text1,
-                            mTicketList));
-
-                    Toast.makeText(getActivity(), "Loaded " + mTicketList.size() +
-                            " tickets", Toast.LENGTH_SHORT).show();
-                } else {
-                    Log.d("Error", response.raw().request().urlString());
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.d("Error", t.getMessage());
-            }
-        });
+        loadTickets();
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        loadTickets();
 
         // Restore the previously serialized activated item position.
         if (savedInstanceState != null

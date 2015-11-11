@@ -10,8 +10,10 @@ import java.util.Date;
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
+import retrofit.http.Body;
 import retrofit.http.GET;
 import retrofit.http.Header;
+import retrofit.http.POST;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
@@ -114,6 +116,56 @@ public final class ApiService {
         }
     }
 
+    public static class CreditCard implements Serializable {
+        public final String number;
+        public final String expireDate;
+
+        public CreditCard(String number) {
+            this.number = number;
+            this.expireDate = "2015-11-11T14:23:16.686Z";
+        }
+    }
+
+    public static class RegisterUserRequest implements Serializable {
+        public final String name;
+        public final String username;
+        public final String password;
+        public final String role;
+        public final ArrayList<CreditCard> creditCards;
+
+        public RegisterUserRequest(String name, String username, String password, ArrayList<CreditCard> creditCards) {
+            this.name = name;
+            this.username = username;
+            this.password = password;
+            this.role = "passenger";
+            this.creditCards = creditCards;
+        }
+    }
+
+    public static class LoginUserRequest implements Serializable {
+        public final String username;
+        public final String password;
+
+        public LoginUserRequest(String username, String password) {
+            this.username = username;
+            this.password = password;
+        }
+    }
+
+    public static class LoginUserResponse implements Serializable {
+        public final String username;
+        public final int id;
+        public final String token;
+        public final String role;
+
+        public LoginUserResponse(String username, int id, String token, String role) {
+            this.username = username;
+            this.id = id;
+            this.token = token;
+            this.role = role;
+        }
+    }
+
     public interface DRail {
         @GET("/api/graph")
         Call<Graph> getGraph(@Header("Bearer") String bearer);
@@ -126,5 +178,11 @@ public final class ApiService {
 
         @GET("api/users/{id}/tickets")
         Call<ArrayList<Ticket>> getTickets(@Header("Bearer") String bearer, @Path("id") int userId);
+
+        @POST("api/register")
+        Call<LoginUserResponse> register(@Body RegisterUserRequest user);
+
+        @POST("api/login")
+        Call<LoginUserResponse> login(@Body LoginUserRequest user);
     }
 }

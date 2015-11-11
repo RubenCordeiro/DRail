@@ -3,9 +3,13 @@
 const Boom = require('boom'),
     Joi = require('joi'),
     Jwt = require('jsonwebtoken'),
-    Lazy = require('lazy.js');
+    Lazy = require('lazy.js'),
+    Async = require('async');
 
+const Station = require('../models/station');
 const User = require('../models/user');
+
+const db = require('seraph')(require('config').get('database'));
 
 var validateToken = (decoded, request, callback) => {
     User.read(decoded.id, function (err, user) {
@@ -194,7 +198,31 @@ module.exports = function (server) {
                 if (!user)
                     return reply(Boom.notFound("User does not exist"));
 
-                return reply(user.tickets);
+                Async.map(user.tickets, (ticket, cb) => {
+                    if (!ticket.trips.length) {
+                        return;
+                    }
+
+                    var firstId = ticket.trips[0];
+                    var lastId = ticket.trips[ticket.trips.length - 1];
+                        
+                    db.rel.read(firstId, (err, rel1) => {
+                        var startStationId = rel1.start;
+                        db.rel.read(lastId, (err, rel2) => {
+                           var endStationId = rel2.end;
+                           
+                           Station.read(startStationId, (err, startStation) => {
+                               ticket.startStation = startStation.name;
+                               Station.read(endStationId, (err, endStation) => {
+                                   ticket.endStation = endStation.name;
+                                   cb(null, ticket);
+                               });
+                           });
+                        });
+                    });
+                }, (err, tickets) => {
+                    return reply(tickets);
+                });
             });
         }
     });

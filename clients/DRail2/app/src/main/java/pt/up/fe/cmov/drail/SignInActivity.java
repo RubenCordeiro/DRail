@@ -54,7 +54,7 @@ public class SignInActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_sign_in);
         // Set up the login form.
         mUsernameView = (AutoCompleteTextView) findViewById(R.id.email);
 
@@ -79,14 +79,14 @@ public class SignInActivity extends AppCompatActivity {
         });
 
         // I can't access the go_to_register_button... I am clueless
-        /*Button registerButton = (Button) findViewById(R.id.go_to_register_button);
+        Button registerButton = (Button) findViewById(R.id.go_to_register_button);
         registerButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
                 startActivity(intent);
             }
-        });*/
+        });
     }
 
     /**

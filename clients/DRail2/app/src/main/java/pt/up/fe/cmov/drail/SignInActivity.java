@@ -78,7 +78,6 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
-        // I can't access the go_to_register_button... I am clueless
         Button registerButton = (Button) findViewById(R.id.go_to_register_button);
         registerButton.setOnClickListener(new OnClickListener() {
             @Override
@@ -123,13 +122,8 @@ public class SignInActivity extends AppCompatActivity {
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-
             Call<ApiService.LoginUserResponse> graphRequest = ApiService.service.login(new ApiService.LoginUserRequest(username, password));
             graphRequest.enqueue(new Callback<ApiService.LoginUserResponse>() {
                 @Override
@@ -149,11 +143,6 @@ public class SignInActivity extends AppCompatActivity {
                 }
             });
         }
-    }
-
-    private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {

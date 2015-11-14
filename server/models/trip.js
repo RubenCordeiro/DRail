@@ -140,7 +140,7 @@ module.exports = {
 
                         results = Lazy(results).map((result) => result[0]).toArray();
                         var reducer = (lastElem, currentStation, callback) => {
-                            console.log("CurrentStation:", currentStation);
+
                             db.query('MATCH path = (departureStation:station)-[trips:trip]->(arrivalStation:station) ' +
                                 'WHERE ID(departureStation) = {departureStation} AND ID(arrivalStation) = {arrivalStation} AND trips.departureDate >= {lastArrivalDate} ' +
                                 'RETURN EXTRACT(r IN relationships(path) | {id: ID(r), departureDate: r.departureDate, ' +

@@ -198,10 +198,8 @@ module.exports = function (server) {
                 if (!user)
                     return reply(Boom.notFound("User does not exist"));
 
+                user.tickets = user.tickets.length ? user.tickets : new Array(user.tickets);
                 Async.map(user.tickets, (ticket, cb) => {
-                    if (!ticket.trips.length) {
-                        return;
-                    }
 
                     var firstId = ticket.trips[0];
                     var lastId = ticket.trips[ticket.trips.length - 1];

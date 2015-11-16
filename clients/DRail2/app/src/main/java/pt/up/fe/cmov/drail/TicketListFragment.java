@@ -109,6 +109,8 @@ public class TicketListFragment extends ListFragment {
                                 android.R.id.text1,
                                 mTicketList));
 
+                        setListAdapter(new TicketListAdapter(getActivity(), R.layout.trips_list_item, mTicketList));
+
                         Toast.makeText(getActivity(), "Loaded " + mTicketList.size() +
                                 " tickets", Toast.LENGTH_SHORT).show();
                     } else {
@@ -118,7 +120,7 @@ public class TicketListFragment extends ListFragment {
 
                 @Override
                 public void onFailure(Throwable t) {
-                    Log.d("Error", t.getMessage());
+                    //Log.d("Error", t.getMessage());
                 }
             });
         }

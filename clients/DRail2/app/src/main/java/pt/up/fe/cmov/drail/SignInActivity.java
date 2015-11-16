@@ -31,6 +31,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -86,6 +93,27 @@ public class SignInActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        try {
+            FileInputStream in = openFileInput("userdata");
+            if (in.available() == 0)
+                return;
+
+            InputStreamReader inputStreamReader = new InputStreamReader(in);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String userInfo = bufferedReader.readLine();
+
+            Gson gson = new Gson();
+            MainActivity.mLoginUser = gson.fromJson(userInfo, ApiService.LoginUserResponse.class);
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(intent);
+
+            Log.d("Error", "loaded data!! " + MainActivity.mLoginUser.id);
+        } catch (FileNotFoundException e) {
+            MainActivity.mLoginUser = null;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

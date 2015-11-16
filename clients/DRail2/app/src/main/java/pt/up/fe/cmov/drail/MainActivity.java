@@ -90,25 +90,6 @@ public class MainActivity extends AppCompatActivity implements SchedulingFragmen
                 tab.setIcon(imageResId[i]);
             }
         }
-
-        try {
-            FileInputStream in = openFileInput("userdata");
-            if (in.available() == 0)
-                return;
-
-            InputStreamReader inputStreamReader = new InputStreamReader(in);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            String userInfo = bufferedReader.readLine();
-
-            Gson gson = new Gson();
-            mLoginUser = gson.fromJson(userInfo, ApiService.LoginUserResponse.class);
-
-            Log.d("Error", "loaded data!! " + mLoginUser.id);
-        } catch (FileNotFoundException e) {
-            // do nothing
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

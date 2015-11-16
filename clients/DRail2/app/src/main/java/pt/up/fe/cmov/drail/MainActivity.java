@@ -43,7 +43,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity implements SchedulingFragment.OnFragmentInteractionListener,
-        LoginFragment.OnFragmentInteractionListener, TicketListFragment.Callbacks, ProfileFragment.OnFragmentInteractionListener {
+        TicketListFragment.Callbacks, ProfileFragment.OnFragmentInteractionListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide

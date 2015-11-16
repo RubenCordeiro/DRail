@@ -21,15 +21,6 @@ import retrofit.Retrofit;
  */
 public class RegisterActivity extends AppCompatActivity {
 
-    /**
-     * Id to identity READ_CONTACTS permission request.
-     */
-    private static final int REQUEST_READ_CONTACTS = 0;
-
-    // UI references.
-    private View mProgressView;
-    private View mLoginFormView;
-
     private TextView mNameRegisterTextView;
     private TextView mUsernameRegisterTextView;
     private TextView mPasswordRegisterTextView;
@@ -54,9 +45,6 @@ public class RegisterActivity extends AppCompatActivity {
                 attemptRegister();
             }
         });
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
 
         Button signInButton = (Button) findViewById(R.id.go_to_sign_in_button);
         signInButton.setOnClickListener(new OnClickListener() {

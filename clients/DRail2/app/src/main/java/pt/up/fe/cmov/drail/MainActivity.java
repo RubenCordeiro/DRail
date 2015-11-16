@@ -43,7 +43,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 
 public class MainActivity extends AppCompatActivity implements SchedulingFragment.OnFragmentInteractionListener,
-        LoginFragment.OnFragmentInteractionListener, TicketListFragment.Callbacks {
+        LoginFragment.OnFragmentInteractionListener, TicketListFragment.Callbacks, ProfileFragment.OnFragmentInteractionListener {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements SchedulingFragmen
                 case 1:
                     return new TicketListFragment();
                 case 2:
-                    return LoginFragment.newInstance(position + 1);
+                    return ProfileFragment.newInstance(position + 1);
                 default:
                     return null;
             }

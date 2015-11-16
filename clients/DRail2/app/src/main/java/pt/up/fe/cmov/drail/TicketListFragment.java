@@ -53,7 +53,7 @@ public class TicketListFragment extends ListFragment {
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(int id);
+        void onItemSelected(int id);
     }
 
     /**
@@ -94,7 +94,7 @@ public class TicketListFragment extends ListFragment {
                     if (response.isSuccess()) {
                         mTicketList = response.body();
 
-                        ArrayList<ApiService.Ticket> toRemove = new ArrayList<ApiService.Ticket>();
+                        ArrayList<ApiService.Ticket> toRemove = new ArrayList<>();
                         for (ApiService.Ticket t : mTicketList) {
                             if (!t.status.equalsIgnoreCase("pending")) {
                                 toRemove.add(t);
@@ -103,13 +103,7 @@ public class TicketListFragment extends ListFragment {
 
                         mTicketList.removeAll(toRemove);
 
-                        setListAdapter(new ArrayAdapter<>(
-                                getActivity(),
-                                android.R.layout.simple_list_item_1,
-                                android.R.id.text1,
-                                mTicketList));
-
-                        setListAdapter(new TicketListAdapter(getActivity(), R.layout.trips_list_item, mTicketList));
+                        setListAdapter(new TicketListAdapter(getActivity(), mTicketList));
 
                         Toast.makeText(getActivity(), "Loaded " + mTicketList.size() +
                                 " tickets", Toast.LENGTH_SHORT).show();

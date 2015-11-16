@@ -11,12 +11,8 @@ import java.util.List;
 
 public class TicketListAdapter extends ArrayAdapter<ApiService.Ticket> {
 
-    public TicketListAdapter(Context context, int textViewResourceId) {
-        super(context, textViewResourceId);
-    }
-
-    public TicketListAdapter(Context context, int resource, List<ApiService.Ticket> items) {
-        super(context, resource, items);
+    public TicketListAdapter(Context context, List<ApiService.Ticket> items) {
+        super(context, R.layout.tickets_list_item, items);
     }
 
     @Override
@@ -27,7 +23,7 @@ public class TicketListAdapter extends ArrayAdapter<ApiService.Ticket> {
         if (v == null) {
             LayoutInflater vi;
             vi = LayoutInflater.from(getContext());
-            v = vi.inflate(R.layout.trips_list_item, null);
+            v = vi.inflate(R.layout.tickets_list_item, null);
         }
 
         ApiService.Ticket ticket = getItem(position);

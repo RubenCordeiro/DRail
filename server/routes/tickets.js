@@ -123,6 +123,10 @@ module.exports = (server) => {
                     return reply(Boom.notFound('User ID does not exist'));
                 }
 
+                if (Math.random() >= 0.9) {
+                    return reply(Boom.badRequest('Credit card was refused'));
+                }
+
                 var currentDate = new Date();
                 var currentTrainId = Lazy(request.payload.trips).first().trainId;
                 var requestedTrips = Lazy(request.payload.trips);

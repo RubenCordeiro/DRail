@@ -141,17 +141,21 @@ module.exports = (server) => {
                             } else
                                 return true;
                         });
-
+                        var t = consecutiveTrips.toArray();
+                        var pluckedTrips = t.map((elem) => {
+                            return elem.id;
+                        });
+                                          
                         User.push(user.id, 'tickets', {
                             creationDate: currentDate,
-                            trips: consecutiveTrips.pluck("id").toArray(),
+                            trips: pluckedTrips,
                             status: 'pending'
                         }, (err) => {
                             if (err) {
                                 return callback(err);
                             } else {
-                                requestedTrips = requestedTrips.without(consecutiveTrips.toArray());
-                                return callback(null);
+                                requestedTrips = requestedTrips.without(t);
+                                return callback();
                             }
                         });
                     },

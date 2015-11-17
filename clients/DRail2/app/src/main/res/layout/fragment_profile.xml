@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:gravity="center"
-            android:drawableLeft="@drawable/ic_ticket"
+            android:drawableLeft="@drawable/ic_action_communication_email"
             android:id="@+id/profile_email"
             android:textColor="#FF707070"/>
 

@@ -65,6 +65,9 @@ public class ProfileFragment extends Fragment {
         TextView username = (TextView) v.findViewById(R.id.profile_username);
         username.setText(MainActivity.mLoginUser.username);
 
+        TextView email = (TextView) v.findViewById(R.id.profile_email);
+        email.setText(MainActivity.mLoginUser.email);
+
         String gravatarUrl = new String(Hex.encodeHex(DigestUtils.md5(MainActivity.mLoginUser.email)));
         gravatarUrl = "http://www.gravatar.com/avatar/" + gravatarUrl;
 

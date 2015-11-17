@@ -84,10 +84,10 @@ public class TripsDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Call<String> tripsRequest = ApiService.service.buyTickets(MainActivity.mLoginUser.token,
+                Call<String> ticketsRequest = ApiService.service.buyTickets(MainActivity.mLoginUser.token,
                         MainActivity.mLoginUser.id,
                         new ApiService.TripsValidation(toBuy));
-                tripsRequest.enqueue(new Callback<String>() {
+                ticketsRequest.enqueue(new Callback<String>() {
                     @Override
                     public void onResponse(Response<String> response, Retrofit retrofit) {
                         if (response.isSuccess()) { // successful request, build graph

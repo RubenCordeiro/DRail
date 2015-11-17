@@ -1,6 +1,7 @@
 package pt.up.fe.cmov.drail;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
@@ -9,12 +10,22 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+
+import static pt.up.fe.cmov.drail.ApiService.*;
 
 /**
  * A list fragment representing a list of Tickets. This fragment
@@ -85,9 +96,30 @@ public class TicketListFragment extends ListFragment {
         }
     }
 
+    public void loadTicketsCache() {
+        try {
+            FileInputStream in = getContext().openFileInput("ticketdata");
+            if (in.available() == 0)
+                return;
+
+            InputStreamReader inputStreamReader = new InputStreamReader(in);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String ticketList = bufferedReader.readLine();
+
+            Gson gson = new Gson();
+            mTicketList = gson.fromJson(ticketList, new TypeToken<ArrayList<Ticket>>(){}.getType());
+            setListAdapter(new TicketListAdapter(getActivity(), mTicketList));
+            Log.d("Error", "loaded data!! " + mTicketList.size());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void loadTickets() {
         if (MainActivity.mLoginUser != null) {
-            Call<ArrayList<ApiService.Ticket>> ticketsRequest = ApiService.service.getTickets(MainActivity.mLoginUser.token, MainActivity.mLoginUser.id);
+            Call<ArrayList<ApiService.Ticket>> ticketsRequest = service.getTickets(MainActivity.mLoginUser.token, MainActivity.mLoginUser.id);
             ticketsRequest.enqueue(new Callback<ArrayList<ApiService.Ticket>>() {
                 @Override
                 public void onResponse(Response<ArrayList<ApiService.Ticket>> response, Retrofit retrofit) {
@@ -95,7 +127,7 @@ public class TicketListFragment extends ListFragment {
                         mTicketList = response.body();
 
                         ArrayList<ApiService.Ticket> toRemove = new ArrayList<>();
-                        for (ApiService.Ticket t : mTicketList) {
+                        for (Ticket t : mTicketList) {
                             if (!t.status.equalsIgnoreCase("pending")) {
                                 toRemove.add(t);
                             }
@@ -123,6 +155,7 @@ public class TicketListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        loadTicketsCache();
         loadTickets();
     }
 

@@ -49,7 +49,7 @@ public class TripsActivity extends AppCompatActivity implements TripsListFragmen
 
             @Override
             public void onFailure(Throwable t) {
-                Log.d("Error", t.getMessage());
+                Log.d("Error", t.toString());
             }
         });
 

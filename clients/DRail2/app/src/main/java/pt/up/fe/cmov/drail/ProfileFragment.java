@@ -75,11 +75,13 @@ public class ProfileFragment extends Fragment {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                v.getContext().deleteFile("userdata");
-                MainActivity.mLoginUser = null;
-                Intent intent = new Intent(v.getContext(), SignInActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+            v.getContext().deleteFile("userdata");
+            v.getContext().deleteFile("ticketdata");
+            MainActivity.mLoginUser = null;
+            TicketListFragment.mTicketList.clear();
+            Intent intent = new Intent(v.getContext(), SignInActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
             }
         });
 

@@ -110,7 +110,29 @@ public class MainActivity extends AppCompatActivity implements SchedulingFragmen
 
             try {
                 outputStreamWriter.write(gson.toJson(mLoginUser));
-                Log.d("Error", "saved data!!");
+                Log.d("Error", "saved user data!!");
+                outputStreamWriter.close();
+                out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (TicketListFragment.mTicketList != null && !TicketListFragment.mTicketList.isEmpty()) {
+            FileOutputStream out = null;
+            try {
+                out = openFileOutput("ticketdata", Context.MODE_PRIVATE);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(out);
+
+            Gson gson = new Gson();
+
+            try {
+                outputStreamWriter.write(gson.toJson(TicketListFragment.mTicketList));
+                Log.d("Error", "saved ticket data!!");
                 outputStreamWriter.close();
                 out.close();
             } catch (IOException e) {

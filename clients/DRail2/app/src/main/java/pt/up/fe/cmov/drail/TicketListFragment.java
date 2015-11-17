@@ -130,6 +130,8 @@ public class TicketListFragment extends ListFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setEmptyText("No tickets");
+
         loadTickets();
 
         // Restore the previously serialized activated item position.

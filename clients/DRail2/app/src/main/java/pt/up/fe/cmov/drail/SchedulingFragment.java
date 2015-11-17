@@ -196,7 +196,7 @@ public class SchedulingFragment extends Fragment implements GoogleMap.OnMyLocati
 
             @Override
             public void onFailure(Throwable t) {
-                Log.d("Error", t.getMessage());
+                Log.d("Error", t.toString());
             }
         });
         return view;

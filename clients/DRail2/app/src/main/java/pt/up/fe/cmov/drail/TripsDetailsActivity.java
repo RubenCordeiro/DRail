@@ -103,7 +103,7 @@ public class TripsDetailsActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Throwable t) {
-                        Log.d("Error", t.getMessage());
+                        Log.d("Error", t.toString());
                         finish();
                     }
                 });

@@ -33,11 +33,11 @@ public class TicketListAdapter extends ArrayAdapter<ApiService.Ticket> {
             TextView tt2 = (TextView) v.findViewById(R.id.ticket_date);
 
             if (tt1 != null) {
-                tt1.setText(ticket.startStation + " to " + ticket.endStation);
+                tt1.setText(String.format("%s to %s", ticket.startStation, ticket.endStation));
             }
 
             if (tt2 != null) {
-                tt2.setText(ticket.creationDate);
+                tt2.setText(ticket.creationDate.replace('T', ' ').substring(0, 19));
             }
         }
 

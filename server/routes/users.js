@@ -198,6 +198,10 @@ module.exports = function (server) {
                 if (!user)
                     return reply(Boom.notFound("User does not exist"));
 
+                if (user.tickets === undefined) {
+                    return reply([]);
+                }
+
                 user.tickets = user.tickets.length ? user.tickets : new Array(user.tickets);
                 Async.map(user.tickets, (ticket, cb) => {
 

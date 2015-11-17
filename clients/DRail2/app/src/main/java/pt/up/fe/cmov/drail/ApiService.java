@@ -1,11 +1,7 @@
 package pt.up.fe.cmov.drail;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Date;
 
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
@@ -131,14 +127,16 @@ public final class ApiService {
     public static class RegisterUserRequest implements Serializable {
         public final String name;
         public final String username;
+        public final String email;
         public final String password;
         public final String role;
         public final ArrayList<CreditCard> creditCards;
 
-        public RegisterUserRequest(String name, String username, String password, String cc) {
+        public RegisterUserRequest(String name, String username, String email, String password, String cc) {
             this.name = name;
             this.username = username;
             this.password = password;
+            this.email = email;
             this.role = "passenger";
             this.creditCards = new ArrayList<>();
             creditCards.add(new CreditCard(cc));
@@ -146,11 +144,11 @@ public final class ApiService {
     }
 
     public static class LoginUserRequest implements Serializable {
-        public final String username;
+        public final String email;
         public final String password;
 
-        public LoginUserRequest(String username, String password) {
-            this.username = username;
+        public LoginUserRequest(String email, String password) {
+            this.email = email;
             this.password = password;
         }
     }
@@ -160,12 +158,14 @@ public final class ApiService {
         public final int id;
         public final String token;
         public final String role;
+        public final String email;
 
-        public LoginUserResponse(String username, int id, String token, String role) {
+        public LoginUserResponse(String email, String username, int id, String token, String role) {
             this.username = username;
             this.id = id;
             this.token = token;
             this.role = role;
+            this.email = email;
         }
     }
 

@@ -22,9 +22,11 @@ import retrofit.Retrofit;
 public class RegisterActivity extends AppCompatActivity {
 
     private TextView mNameRegisterTextView;
+    private TextView mEmailRegisterTextView;
     private TextView mUsernameRegisterTextView;
     private TextView mPasswordRegisterTextView;
     private TextView mCcRegisterTextView;
+
     private Button mRegisterButton;
 
 
@@ -34,6 +36,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         // Set up the login form.
         mNameRegisterTextView = (TextView) findViewById(R.id.register_name);
+        mEmailRegisterTextView = (TextView) findViewById(R.id.register_email);
         mUsernameRegisterTextView = (TextView) findViewById(R.id.register_username);
         mPasswordRegisterTextView = (TextView) findViewById(R.id.register_password);
         mCcRegisterTextView = (TextView) findViewById(R.id.register_cc);
@@ -67,12 +70,14 @@ public class RegisterActivity extends AppCompatActivity {
 
 
         mNameRegisterTextView.setError(null);
+        mEmailRegisterTextView.setError(null);
         mUsernameRegisterTextView.setError(null);
         mPasswordRegisterTextView.setError(null);
         mCcRegisterTextView.setError(null);
 
         // Store values at the time of the login attempt.
         String name = mNameRegisterTextView.getText().toString();
+        String email = mEmailRegisterTextView.getText().toString();
         String username = mUsernameRegisterTextView.getText().toString();
         String password = mPasswordRegisterTextView.getText().toString();
         String cc = mCcRegisterTextView.getText().toString();
@@ -87,17 +92,21 @@ public class RegisterActivity extends AppCompatActivity {
             cancel = true;
         }
 
-        // Check for a valid email address.
         if (TextUtils.isEmpty(username)) {
             mUsernameRegisterTextView.setError(getString(R.string.error_field_required));
             focusView = mUsernameRegisterTextView;
             cancel = true;
         }
 
-        // Check for a valid email address.
         if (TextUtils.isEmpty(name)) {
             mNameRegisterTextView.setError(getString(R.string.error_field_required));
             focusView = mNameRegisterTextView;
+            cancel = true;
+        }
+
+        if (TextUtils.isEmpty(email)) {
+            mEmailRegisterTextView.setError("This field is required");
+            focusView = mEmailRegisterTextView;
             cancel = true;
         }
 
@@ -106,7 +115,8 @@ public class RegisterActivity extends AppCompatActivity {
             // form field with an error.
             focusView.requestFocus();
         } else {
-            Call<ApiService.LoginUserResponse> registerRequest = ApiService.service.register(new ApiService.RegisterUserRequest(name, username, password, cc));
+            Call<ApiService.LoginUserResponse> registerRequest = ApiService.service.register(new
+                    ApiService.RegisterUserRequest(name, username, email, password, cc));
             registerRequest.enqueue(new Callback<ApiService.LoginUserResponse>() {
                 @Override
                 public void onResponse(Response<ApiService.LoginUserResponse> response, Retrofit retrofit) {

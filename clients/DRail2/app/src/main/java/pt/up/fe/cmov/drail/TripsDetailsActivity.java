@@ -1,17 +1,17 @@
 package pt.up.fe.cmov.drail;
 
-import android.app.ActionBar;
-import android.content.Intent;
+
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -93,6 +93,10 @@ public class TripsDetailsActivity extends AppCompatActivity {
                         if (response.isSuccess()) { // successful request, build graph
                             finish();
                         } else {
+                            Snackbar.make(findViewById(R.id.trip_details_table),
+                                    "Error buying ticket: " + response.body(),
+                                    Snackbar.LENGTH_LONG).show();
+
                             Log.d("ResponseError", response.raw().request().urlString());
                         }
                     }
@@ -103,9 +107,6 @@ public class TripsDetailsActivity extends AppCompatActivity {
                         finish();
                     }
                 });
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
             }
         });
     }

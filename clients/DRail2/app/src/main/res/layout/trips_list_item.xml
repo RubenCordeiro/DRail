@@ -24,6 +24,7 @@ android:padding="5dip" >
     android:paddingBottom ="10dip"
     android:textColor="#040404"
     android:textSize="25dip"
+    android:text="Title"
     android:textStyle="bold"
     android:typeface="sans" />
 <!-- Weather Information-->
@@ -35,6 +36,17 @@ android:padding="5dip" >
     android:layout_alignLeft="@+id/departure_date_text_view"
     android:paddingTop="5dip"
     android:layout_centerHorizontal="true"
+    android:text="Subtitle"
     android:textColor="#343434"
     android:textSize="15dip" />
+
+<TextView
+        android:id="@+id/train_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/departure_date_text_view"
+        android:layout_marginStart="220dip"
+        android:paddingTop="5dip"
+        android:textColor="#343434"
+        android:textSize="15dip" />
 </RelativeLayout>

@@ -106,7 +106,7 @@ public class TripsListFragment extends Fragment {
 
         for (ArrayList<ApiService.HydratedTrip> l : al) {
 
-            TripsItem item = new TripsItem(l.get(0).departureDate, l.get(l.size() - 1).arrivalDate);
+            TripsItem item = new TripsItem(l.get(0).departureDate, l.get(l.size() - 1).arrivalDate, l.get(0).trainId);
             items.add(item);
         }
 
@@ -132,10 +132,12 @@ public class TripsListFragment extends Fragment {
     public static class TripsItem {
         public final String departureDate;
         public final String arrivalDate;
+        public final int trainId;
 
-        public TripsItem(String departureDate, String arrivalDate) {
+        public TripsItem(String departureDate, String arrivalDate, int trainId) {
             this.departureDate = departureDate;
             this.arrivalDate = arrivalDate;
+            this.trainId = trainId;
         }
     }
 
@@ -155,6 +157,7 @@ public class TripsListFragment extends Fragment {
                 super(v);
                 mArrivalDateTextView = (TextView) v.findViewById(R.id.arrival_date_text_view);
                 mDepartureDateTextView = (TextView) v.findViewById(R.id.departure_date_text_view);
+                mTrainsTextView = (TextView) v.findViewById(R.id.train_text_view);
             }
         }
 
@@ -186,6 +189,7 @@ public class TripsListFragment extends Fragment {
         public void onBindViewHolder(ViewHolder holder, int position) {
             holder.mArrivalDateTextView.setText(Html.fromHtml("<b>Arrival date:</b> " + mDataset[position].arrivalDate));
             holder.mDepartureDateTextView.setText(Html.fromHtml("<b>Departure date:</b> " + mDataset[position].departureDate));
+            holder.mTrainsTextView.setText(String.format("Train ID: %s", Integer.toString(mDataset[position].trainId)));
         }
 
         // Return the size of your dataset (invoked by the layout manager)

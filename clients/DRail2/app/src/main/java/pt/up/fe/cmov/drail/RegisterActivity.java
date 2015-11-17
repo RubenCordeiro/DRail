@@ -113,7 +113,7 @@ public class RegisterActivity extends AppCompatActivity {
                     if (response.isSuccess()) { // successful request, build graph
                         MainActivity.mLoginUser = response.body();
                         Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                        setIntent(intent);
+                        startActivity(intent);
                     } else {
                         Log.d("Error", response.raw().request().urlString());
                     }

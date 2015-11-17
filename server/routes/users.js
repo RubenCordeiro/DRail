@@ -44,6 +44,7 @@ module.exports = function (server) {
                     name: Joi.string().required(),
                     username: Joi.string().required(),
                     password: Joi.string().required(),
+                    email: Joi.string().email().required(),
                     role: Joi.string().allow(['passenger', 'inspector']),
                     creditCards: Joi.array().items(Joi.object().keys({
                         expireDate: Joi.date().required(),
@@ -56,7 +57,7 @@ module.exports = function (server) {
         },
         handler: (request, reply) => {
 
-            User.where({ username: request.payload.username }, (err, users) => {
+            User.where({ email: request.payload.email }, (err, users) => {
 
                 if (err) {
                     server.log(['error', 'database'], err);
@@ -76,6 +77,7 @@ module.exports = function (server) {
                         username: newUser.username,
                         id: newUser.id,
                         role: newUser.role,
+                        email: newUser.email,
                         token: Jwt.sign({
                             username: newUser.username,
                             id: newUser.id,
@@ -94,7 +96,7 @@ module.exports = function (server) {
         config: {
             validate: {
                 payload: {
-                    username: Joi.string().required(),
+                    email: Joi.string().email().required(),
                     password: Joi.string().required()
                 }
             },
@@ -116,6 +118,7 @@ module.exports = function (server) {
                     id: user.id,
                     username: user.username,
                     role: user.role,
+                    email: user.email,
                     token: Jwt.sign({
                         id: user.id,
                         username: user.username,

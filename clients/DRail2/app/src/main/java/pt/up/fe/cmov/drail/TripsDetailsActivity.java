@@ -1,6 +1,7 @@
 package pt.up.fe.cmov.drail;
 
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -89,10 +90,11 @@ public class TripsDetailsActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Response<String> response, Retrofit retrofit) {
                         if (response.isSuccess()) { // successful request, build graph
-                            finish();
+                            Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                            startActivity(intent);
                         } else {
                             Snackbar.make(findViewById(R.id.trip_details_table),
-                                    "Error buying ticket: " + response.body(),
+                                    "Error buying ticket: " + "credit card refused",
                                     Snackbar.LENGTH_LONG).show();
 
                             Log.d("ResponseError", response.raw().request().urlString());

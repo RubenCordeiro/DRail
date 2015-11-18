@@ -104,7 +104,7 @@ module.exports = function (server) {
             tags: ['api']
         },
         handler: (request, reply) => {
-            User.where({username: request.payload.username, password: request.payload.password}, (err, users) => {
+            User.where({email: request.payload.email, password: request.payload.password}, (err, users) => {
                 if (err) {
                     server.log(['error', 'database'], err);
                     return reply(Boom.badImplementation("Internal server error"));

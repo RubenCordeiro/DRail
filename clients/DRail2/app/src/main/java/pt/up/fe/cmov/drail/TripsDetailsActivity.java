@@ -42,12 +42,14 @@ public class TripsDetailsActivity extends AppCompatActivity {
         TableLayout stk = (TableLayout) findViewById(R.id.table_main);
         stk.addView(createItineraryTitle());
 
+        Double totalDistance = .0;
         Integer previousTrainId = null;
         ApiService.HydratedTrip previousTrip = null;
         DateFormat format = new SimpleDateFormat("HH:mm:ss");
         int currentIndex = 0;
         for (ApiService.HydratedTrip trip : trips) {
 
+            totalDistance += trip.distance;
             toBuy.add(new ApiService.TripValidation(trip.id, trip.trainId));
 
             if (previousTrainId != null && !previousTrainId.equals(trip.trainId)) {
@@ -77,6 +79,8 @@ public class TripsDetailsActivity extends AppCompatActivity {
             previousTrip = trip;
             ++currentIndex;
         }
+
+        stk.addView(createSummaryEntry(totalDistance));
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -151,6 +155,7 @@ public class TripsDetailsActivity extends AppCompatActivity {
         TableRow tr = new TableRow(getApplicationContext());
 
         TextView stationTextView = new TextView(getApplicationContext());
+        stationTextView.setShadowLayer(new Float(0.5), new Float(0.5), new Float(0.5), Color.BLACK);
 
         if (!isLast) {
             stationTextView.setText(trip.prevStationName);
@@ -235,7 +240,7 @@ public class TripsDetailsActivity extends AppCompatActivity {
         return tr;
     }
 
-    private TableRow createSummaryEntry(int TotalDistance) {
+    private TableRow createSummaryEntry(Double TotalDistance) {
         TableRow tr = new TableRow(getApplicationContext());
 
         TextView dummyTextView1 = new TextView(getApplicationContext());
@@ -247,7 +252,7 @@ public class TripsDetailsActivity extends AppCompatActivity {
 
         TextView passageTimeTextView = new TextView(getApplicationContext());
         passageTimeTextView.setGravity(Gravity.RIGHT);
-        passageTimeTextView.setText(Integer.toString(TotalDistance));
+        passageTimeTextView.setText(Double.toString(TotalDistance));
 
         tr.addView(dummyTextView1);
         tr.addView(dummyTextView2);

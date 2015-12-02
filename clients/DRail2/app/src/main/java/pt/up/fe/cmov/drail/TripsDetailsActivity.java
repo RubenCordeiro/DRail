@@ -245,6 +245,7 @@ public class TripsDetailsActivity extends AppCompatActivity {
 
         TextView dummyTextView1 = new TextView(getApplicationContext());
         dummyTextView1.setText("TotalCost:");
+        dummyTextView1.setTextColor(Color.BLACK);
 
 
         TextView dummyTextView2 = new TextView(getApplicationContext());
@@ -252,7 +253,8 @@ public class TripsDetailsActivity extends AppCompatActivity {
 
         TextView passageTimeTextView = new TextView(getApplicationContext());
         passageTimeTextView.setGravity(Gravity.RIGHT);
-        passageTimeTextView.setText(Double.toString(TotalDistance));
+        passageTimeTextView.setText(Double.toString(TotalDistance) + " €");
+        passageTimeTextView.setTextColor(Color.BLACK);
 
         tr.addView(dummyTextView1);
         tr.addView(dummyTextView2);
